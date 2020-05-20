@@ -19,12 +19,15 @@ router.get('/login', function (req, res) {
         console.log(`redirecting to ${url}`);
         res.redirect(url);
     }
-})
+});
 
 router.post('/login', function (req, res) {
 
     console.log(req.body);
 
+    // check valid account
+    // ...
+    
     req.session.isLogin = true;
     const account = {
         username: req.body.username,
@@ -32,4 +35,4 @@ router.post('/login', function (req, res) {
     };
     req.session.account = account;
     res.redirect('../home');
-})
+});

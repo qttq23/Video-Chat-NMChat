@@ -32,11 +32,11 @@ app.use(expSession(
         resave: false,
         saveUninitialized: true,
     })
-)
+);
 
 
 
-// authen
+// authen: login, register
 const authenRouter = require('./routes/authen');
 app.use('/authen', authenRouter);
 
@@ -44,10 +44,10 @@ app.use('/authen', authenRouter);
 // app middleware
 app.use(async function(req, res, next){
 
-    console.log('entrance')
+    console.log('entrance');
 
-	// if(!req.session.isLogin){
-    if(false){
+	if(!req.session.isLogin){
+    // if(false){
         console.log('not yet login');
 
         res.redirect('/authen/login');
@@ -58,13 +58,13 @@ app.use(async function(req, res, next){
         next();
     }
 
-})
+});
 
 
 // default get
 app.get('/', function(req, res){
 
-    res.redirect('/home')
+    res.redirect('/home');
 
 })
 
@@ -75,11 +75,11 @@ app.get('/home', function(req, res){
         isLogin: req.session.isLogin,
         account: req.session.account
     });
-})
+});
 
 
 // create http server listen to port
 const port = process.env.PORT || 3000;
 app.listen(port, function () {
     console.log(`Server is running on: localhost:${port}`);
-})
+});
