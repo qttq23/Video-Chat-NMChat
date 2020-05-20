@@ -3,8 +3,19 @@ const express = require('express');
 const expSession = require('express-session');
 var exphbs = require('express-handlebars');
 
+const http = require('http');
+const socketIO = require('socket.io');
 
+// create express app
 const app = express();
+
+// create http server listen to port
+const server = http.Server(app);
+server.listen(process.env.PORT || 3000);
+
+// create socket.io server on same port as http
+global.io = socketIO(server);
+
 
 // view content of POST message
 app.use(express.urlencoded({
@@ -78,8 +89,64 @@ app.get('/home', function(req, res){
 });
 
 
-// create http server listen to port
-const port = process.env.PORT || 3000;
-app.listen(port, function () {
-    console.log(`Server is running on: localhost:${port}`);
+// room
+const roomManager = require('./utils/room-manager');
+roomManager.startSocketIO();
+
+app.post('/room/create', function(req, res){
+
+    console.log('post /room/create');
+    console.log(req.session.account);
+    console.log(req.body.roomName);
+
+    const roomName = req.body.roomName;
+    const client = req.session.account;
+    if(roomManager.canCreate(roomName)){
+        roomManager.create(roomName, account);
+        res.redirect('/room?id=' + roomName);
+    }
+    else{
+        res.json({
+            result: false,
+            message: 'cannot create room'
+        });
+    }
 });
+
+app.post('/room/join', function (req, res) {
+
+    console.log('post /room/join');
+    console.log(req.session.account);
+    console.log(req.body.roomName);
+
+    const roomName = req.body.roomName;
+    const client = req.session.account;
+    if (roomManager.canJoin(roomName)) {
+        roomManager.join(roomName, account);
+        res.redirect('/room?id=' + roomName);
+    }
+    else {
+        res.json({
+            result: false,
+            message: 'cannot join room'
+        });
+    }
+});
+
+app.get('/room', function(req, res){
+
+    console.log('get room: ' + req.query.id);
+    res.render('room',{
+        roomName: req.query.id
+    });
+});
+
+
+
+
+
+// create http server listen to port
+// const port = process.env.PORT || 3000;
+// app.listen(port, function () {
+//     console.log(`Server is running on: localhost:${port}`);
+// });
