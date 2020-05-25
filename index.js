@@ -25,15 +25,21 @@ app.use(express.urlencoded({
 
 
 // set handlebars
-app.engine('handlebars', exphbs({
-    defaultLayout: 'main.handlebars',
+// app.engine('handlebars', exphbs({
+//     defaultLayout: 'main.handlebars',
+// })
+// );
+// app.set('view engine', 'handlebars');
+app.engine('html', exphbs({
+    defaultLayout: false,
 })
 );
-app.set('view engine', 'handlebars');
+app.set('view engine', 'html');
 
 
 // set public static folder
 app.use(express.static('public'));
+app.use(express.static('.'));
 
 // set session
 app.use(expSession(

@@ -11,7 +11,8 @@ router.get('/login', function (req, res) {
     console.log('get login');
 
     if (!req.session.isLogin) {
-        res.render('authen/login');
+        // res.render('authen/login');
+        res.render('homepage/index.html');
     }
     else {
         let url = req.headers.referer || '../home';
