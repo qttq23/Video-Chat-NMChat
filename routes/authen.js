@@ -12,7 +12,14 @@ router.get('/login', function (req, res) {
 
     if (!req.session.isLogin) {
         // res.render('authen/login');
-        res.render('homepage/index.html');
+
+        req.session.isLogin = true;
+        const account = {
+            username: ''+ Math.random(),
+            password: 'random'
+        };
+        req.session.account = account;
+        res.redirect('../home');
     }
     else {
         let url = req.headers.referer || '../home';

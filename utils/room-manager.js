@@ -1,7 +1,17 @@
 
+var roomList = [];
+
 module.exports = {
 
     canCreate: (roomName) => {
+        let i = 0;
+        for (i = 0; i < roomList.length; i++) {
+            if (roomList[i].roomName == roomName) {
+                return false;
+            }
+        }
+
+        return true;
 
     },
 
@@ -10,15 +20,34 @@ module.exports = {
     },
 
     create: (roomName, host) => {
+        roomList.push({
+            roomName: roomName,
+            host: host
+        });
 
+        
     },
 
     join: (roomName, client) => {
 
     },
 
+    getRoomInfo: (roomId)=>{
+
+
+        let i = 0;
+        for(i = 0; i < roomList.length; i++){
+            if (roomList[i].roomName == roomId) {
+                return roomList[i];
+            }
+        }
+
+        return null;
+    },
+
     startSocketIO: () => {
         io.sockets.on('connection', function (socket) {
+
 
             socket.on('get id', (fn) => {
                 console.log('a client request id: ' + socket.id);
@@ -28,38 +57,39 @@ module.exports = {
             socket.on('got user media', (data) => {
                 console.log('a client ready');
                 console.log(data);
-                socket.broadcast.emit('got user media', data);
+
+                console.log('local room: ' + socket.myRoom);
+                socket.broadcast.in(socket.myRoom).emit('got user media', data);
             });
 
             socket.on('offer', (data) => {
                 console.log('a client send offer');
                 console.log(data);
-                socket.broadcast.emit('offer', data);
+               
+
+
+                socket.broadcast.in(socket.myRoom).emit('offer', data);
             });
 
             socket.on('answer', (data) => {
                 console.log('a client send answer');
                 console.log(data);
-                socket.broadcast.emit('answer', data);
+            
+                socket.broadcast.in(socket.myRoom).emit('answer', data);
             });
 
             socket.on('candidate', (data) => {
                 console.log('a client send candidate');
                 console.log(data);
-                socket.broadcast.emit('candidate', data);
+
+                socket.broadcast.in(socket.myRoom).emit('candidate', data);
             });
 
 
 
-            // convenience function to log server messages on the client
             function log(msg) {
-                // var array = ['Message from server:'];
-                // array.push.apply(array, arguments);
-                // socket.emit('log', array);
-
                 console.log(msg);
             }
-
 
             socket.on('create or join', function (room) {
                 log('Received request to create or join room ' + room);
@@ -69,16 +99,28 @@ module.exports = {
                 log('Room ' + room + ' now has ' + numClients + ' client(s)');
 
                 if (numClients === 0) {
-                    socket.join(room);
                     log('Client ID ' + socket.id + ' created room ' + room);
+                    
+                    socket.leave(socket.id);
+                    socket.join(room);
                     socket.emit('created', room, socket.id);
+                    socket.myRoom = room;
 
                 } else if (numClients === 1 || numClients == 2) {
                     log('Client ID ' + socket.id + ' joined room ' + room);
-                    io.sockets.in(room).emit('join', room);
+
+                    // io.sockets.in(room).emit('join', room);
+                    // socket.join(room);
+                    // socket.emit('joined', room, socket.id);
+                    // io.sockets.in(room).emit('ready');
+
+                    socket.leave(socket.id);
                     socket.join(room);
-                    socket.emit('joined', room, socket.id);
-                    io.sockets.in(room).emit('ready');
+                    socket.emit('joined', room);
+
+                    socket.myRoom = room;
+                    // socket.broadcast.in(room).emit('joined', room, socket.id);
+                    // io.sockets.in(room).emit('ready');
                 } else { // max two clients
                     socket.emit('full', room);
                 }
@@ -98,8 +140,13 @@ module.exports = {
                 }
             });
 
-            socket.on('bye', function () {
-                console.log('received bye');
+            socket.on('disconnect', function () {
+                console.log('a client disconnected');
+                
+                socket.leave(socket.myRoom);
+                socket.myRoom = null;
+
+                
             });
 
         });
