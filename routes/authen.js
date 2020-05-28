@@ -1,5 +1,6 @@
 
 const express = require('express');
+const userModel = require('../models/user.model');
 
 const router = express.Router();
 module.exports = router;
@@ -29,19 +30,27 @@ router.get('/login', function (req, res) {
     }
 });
 
-router.post('/login', function (req, res) {
+router.post('/login', async function (req, res) {
 
     console.log(req.body);
 
     // check valid account
+    let result = await userModel.get_user_by_email(req.body.username);
+    console.log(result);
+    console.log(result[0][0]);
+    
+    let user = result[0][0];
+    if (!user || user.Password !== req.body.password){
+        res.json({
+            result: false,
+            msg: 'sign in failed!'
+        });
+        return;
+    }
     // ...
     
     req.session.isLogin = true;
-    const account = {
-        username: req.body.username,
-        password: req.body.password
-    };
-    req.session.account = account;
+    req.session.account = user;
     // res.redirect('../home');
     res.json({
         result: true,

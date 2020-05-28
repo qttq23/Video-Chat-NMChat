@@ -64,7 +64,7 @@ module.exports = {
 
             socket.on('offer', (data) => {
                 console.log('a client send offer');
-                console.log(data);
+                // console.log(data);
                
 
 
@@ -73,14 +73,14 @@ module.exports = {
 
             socket.on('answer', (data) => {
                 console.log('a client send answer');
-                console.log(data);
+                // console.log(data);
             
                 socket.broadcast.in(socket.myRoom).emit('answer', data);
             });
 
             socket.on('candidate', (data) => {
                 console.log('a client send candidate');
-                console.log(data);
+                // console.log(data);
 
                 socket.broadcast.in(socket.myRoom).emit('candidate', data);
             });
