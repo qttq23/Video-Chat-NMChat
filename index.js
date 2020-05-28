@@ -135,25 +135,25 @@ app.post('/room/create', function(req, res){
     }
 });
 
-app.post('/room/join', function (req, res) {
+// app.post('/room/join', function (req, res) {
 
-    console.log('post /room/join');
-    console.log(req.session.account);
-    console.log(req.body.roomName);
+//     console.log('post /room/join');
+//     console.log(req.session.account);
+//     console.log(req.body.roomName);
 
-    const roomName = req.body.roomName;
-    const client = req.session.account;
-    if (roomManager.canJoin(roomName)) {
-        roomManager.join(roomName, account);
-        res.redirect('/room?id=' + roomName);
-    }
-    else {
-        res.json({
-            result: false,
-            message: 'cannot join room'
-        });
-    }
-});
+//     const roomName = req.body.roomName;
+//     const client = req.session.account;
+//     if (roomManager.canJoin(roomName)) {
+//         roomManager.join(roomName, account);
+//         res.redirect('/room?id=' + roomName);
+//     }
+//     else {
+//         res.json({
+//             result: false,
+//             message: 'cannot join room'
+//         });
+//     }
+// });
 
 app.get('/room', function(req, res){
 
@@ -176,14 +176,14 @@ app.get('/room', function(req, res){
     // go to room
     req.session.isAlreadyInRoom = true;
     var isHost = false;
-    if(roomInfo.host.username === req.session.account.username){
+    if(roomInfo.host.Email === req.session.account.Email){
         isHost = true
     }
     
     res.render('room/room',{
         roomInfo: roomInfo,
         isHost: isHost,
-        userId: req.session.account.username
+        userId: req.session.account.Email
     });
 });
 
