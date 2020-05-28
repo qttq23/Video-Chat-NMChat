@@ -106,7 +106,7 @@ module.exports = {
                     socket.emit('created', room, socket.id);
                     socket.myRoom = room;
 
-                } else if (numClients === 1 || numClients == 2) {
+                } else if (1 <= numClients <= 3) {
                     log('Client ID ' + socket.id + ' joined room ' + room);
 
                     // io.sockets.in(room).emit('join', room);

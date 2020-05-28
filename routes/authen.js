@@ -11,15 +11,15 @@ router.get('/login', function (req, res) {
     console.log('get login');
 
     if (!req.session.isLogin) {
-        // res.render('authen/login');
+        res.render('login/login');
 
-        req.session.isLogin = true;
-        const account = {
-            username: ''+ Math.random(),
-            password: 'random'
-        };
-        req.session.account = account;
-        res.redirect('../home');
+        // req.session.isLogin = true;
+        // const account = {
+        //     username: ''+ Math.random(),
+        //     password: 'random'
+        // };
+        // req.session.account = account;
+        // res.redirect('../home');
     }
     else {
         let url = req.headers.referer || '../home';
@@ -42,5 +42,9 @@ router.post('/login', function (req, res) {
         password: req.body.password
     };
     req.session.account = account;
-    res.redirect('../home');
+    // res.redirect('../home');
+    res.json({
+        result: true,
+        redirect: '/home'
+    });
 });

@@ -3,35 +3,6 @@
 document.write("text from main.js");
 
 
-$('.btnSubmitJoin').click(function () {
-
-    // check abcxyz
-
-
-    // submit
-    $.ajax({
-        method: 'post',
-        url: '/room/create',
-        data: {
-            roomName: $('#form3').val()
-        }
-
-    }).done(function (json) {
-        console.log(json);
-
-        if (json.result === true) {
-            window.location.href = json.redirect;
-        }
-        else {
-            alert(json.msg);
-        }
-    });
-
-
-
-    //Very important line, it disable the page refresh.
-    return false;
-});
 
 
 (function($) {
@@ -95,6 +66,39 @@ $('.btnSubmitJoin').click(function () {
         var username = $("#username").val();
         var password = $("#password").val();
         alert(`${username} ${password}`);
-    })
+
+
+        // check abcxyz
+
+
+        // submit
+        $.ajax({
+            method: 'post',
+            url: '/authen/login',
+            data: {
+                username: username,
+                password: password
+            }
+
+        }).done(function (json) {
+            console.log(json);
+
+            if (json.result === true) {
+                window.location.href = json.redirect;
+                // server redirect to home
+            }
+            else {
+                alert(json.msg);
+            }
+        });
+
+
+
+        //Very important line, it disable the page refresh.
+        return false;
+
+    });
+
+
 })(jQuery);
 

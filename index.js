@@ -188,7 +188,7 @@ app.get('/room', function(req, res){
 });
 
 app.post('/room/leave', function(req, res){
-    console.log('leave room: ');
+    console.log('leave room: ' + req.body.id);
 
     req.session.isAlreadyInRoom = false;
     res.json({result: true});
