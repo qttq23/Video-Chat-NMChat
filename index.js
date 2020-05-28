@@ -88,7 +88,7 @@ app.get('/', function(req, res){
 // homepage
 app.get('/home', function(req, res){
     // res.sendFile(__dirname + '/index.html');
-    res.render('home', {
+    res.render('homepage/index', {
         isLogin: req.session.isLogin,
         account: req.session.account
     });
@@ -106,15 +106,31 @@ app.post('/room/create', function(req, res){
     console.log(req.body.roomName);
 
     const roomName = req.body.roomName;
-    const client = req.session.account;
+    const host = req.session.account;
+
+    // check restricts...
+    if (req.session.isAlreadyInRoom === true) {
+        res.json({
+            result: false,
+            msg: 'You are already in one room. leave room to create another room.'
+        });
+        return;
+    }
+    
+
+
     if(roomManager.canCreate(roomName)){
-        roomManager.create(roomName, account);
-        res.redirect('/room?id=' + roomName);
+        roomManager.create(roomName, host);
+        // res.redirect('/room?id=' + roomName);
+        res.json({
+            result: true,
+            redirect: '/room?id=' + roomName
+        });
     }
     else{
         res.json({
             result: false,
-            message: 'cannot create room'
+            msg: 'cannot create room'
         });
     }
 });
@@ -142,10 +158,41 @@ app.post('/room/join', function (req, res) {
 app.get('/room', function(req, res){
 
     console.log('get room: ' + req.query.id);
-    res.render('room',{
-        roomName: req.query.id
+
+    // check restricts...
+    // if(req.session.isAlreadyInRoom === true){
+    //     res.end('You are already in one room. leave room to join another room.');
+    //     return;
+    // }
+    
+    var roomInfo = roomManager.getRoomInfo(req.query.id);
+    console.log(roomInfo);
+    if(!roomInfo){
+        res.end('Room not found');
+        return;
+    }
+    
+    
+    // go to room
+    req.session.isAlreadyInRoom = true;
+    var isHost = false;
+    if(roomInfo.host.username === req.session.account.username){
+        isHost = true
+    }
+    
+    res.render('room/room',{
+        roomInfo: roomInfo,
+        isHost: isHost,
+        userId: req.session.account.username
     });
 });
+
+app.post('/room/leave', function(req, res){
+    console.log('leave room: ');
+
+    req.session.isAlreadyInRoom = false;
+    res.json({result: true});
+})
 
 
 

@@ -11,7 +11,13 @@ var turnReady;
 var pcConfig = {
     'iceServers': [{
         'urls': 'stun:stun.l.google.com:19302'
-    }]
+    },
+    {
+        'urls': 'turn:numb.viagenie.ca',
+        'credential': 'bthang',
+        'username': '1753102@student.hcmus.edu.vn'
+    }
+    ]
 };
 
 // Set up audio and video regardless of what devices are present.
@@ -29,7 +35,7 @@ var isGotMedia = false;
 
 /////////////////////////////////////////////
 
-var room = 'foo';
+var room = roomName;
 // Could prompt for room name:
 // room = prompt('Enter room name:');
 
@@ -41,8 +47,33 @@ socket.on('connect', () => {
     });
 });
 
+/////////////////////
+
+$(window).on("beforeunload", function () {
+    $.ajax({
+        method: 'post',
+        url: '/room/leave',
+        data: {
+            id: room
+        }
+        
+
+    }).done(function (json) {
+        console.log(json);
+    });
+
+})
+
+
+//////////////////
+
 
 if (room !== '') {
+    if(isHost === true){
+    }
+    else{
+
+    }
     socket.emit('create or join', room);
     console.log('Attempted to create or  join room', room);
 }
@@ -63,9 +94,13 @@ socket.on('joined', function (room) {
 ///////////////////////////////////////////////////////
 
 var localVideo = document.querySelector('#localVideo');
-// var remoteVideos = document.querySelector('.remoteVideo');
 var remoteVideos = document.getElementsByClassName("remoteVideo");
 console.log(remoteVideos);
+
+
+/////////////
+
+///////////////
 
 navigator.mediaDevices.getUserMedia({
     audio: false,
@@ -73,14 +108,21 @@ navigator.mediaDevices.getUserMedia({
 })
     .then(gotStream)
     .catch(function (e) {
-        alert('getUserMedia() error: ' + e.name);
+        alert('getUserMedia() error2: ' + e.name);
     });
+
+
+var camVideoTrack;
+var currentTrack;
 
 function gotStream(stream) {
     console.log('Adding local stream.');
     localStream = stream;
     localVideo.srcObject = stream;
     isGotMedia = true;
+
+    camVideoTrack = localStream.getVideoTracks()[0];
+    currentTrack = localStream.getVideoTracks()[0];
 
     // while(!isInRoom || !isGotMedia){}
     var myTimeout = () => {
@@ -125,7 +167,8 @@ socket.on('got user media', (data) => {
     peers.push(newPeer);
 
     while (!isGotMedia) { }
-    connection.addStream(localStream);
+    // connection.addStream(localStream);
+    newPeer.videoSender = connection.addTrack(currentTrack, localStream);
 
 
     // send offer
@@ -161,7 +204,9 @@ socket.on('offer', (data) => {
         peers.push(newPeer);
 
         while (!isGotMedia) { }
-        connection.addStream(localStream);
+        // connection.addStream(localStream);
+        newPeer.videoSender = connection.addTrack(currentTrack, localStream);
+
 
         // accept
         connection.setRemoteDescription(new RTCSessionDescription(data.message));
@@ -199,6 +244,7 @@ socket.on('answer', (data) => {
 });
 
 
+
 socket.on('candidate', (data) => {
     console.log('receive candidate message in nowhere');
     console.log(data);
@@ -211,12 +257,17 @@ socket.on('candidate', (data) => {
             candidate: message.candidate
         });
 
+
         var peer = findPeerById(data.from);
         peer.connection.addIceCandidate(candidate);
     }
 });
 
-// console.log('Getting user media with constraints', constraints);
+
+socket.on('disconnect', ()=>{
+    socket.emit('bye');
+})
+
 
 if (location.hostname !== 'localhost') {
     requestTurn(
@@ -230,10 +281,11 @@ if (location.hostname !== 'localhost') {
 function createPeerConnection(toId) {
     var connection = null;
     try {
-        connection = new RTCPeerConnection(null);
+        connection = new RTCPeerConnection(pcConfig);
+
 
         connection.onicecandidate = (event) => {
-            console.log('icecandidate event: ', event);
+            console.log('icecandidate event (updated): ', event);
 
             if (event.candidate) {
 
@@ -241,6 +293,7 @@ function createPeerConnection(toId) {
                     // custom
                     from: localId,
                     to: toId,
+                    candidate: event.candidate,
                     // default
                     message: {
                         type: 'candidate',
@@ -248,6 +301,7 @@ function createPeerConnection(toId) {
                         id: event.candidate.sdpMid,
                         candidate: event.candidate.candidate
                     }
+
                 });
 
             } else {
@@ -257,6 +311,7 @@ function createPeerConnection(toId) {
 
         connection.onaddstream = (event) => {
             console.log('Remote stream added.');
+            console.log(event);
 
             var peer = findPeerById(toId);
             peer.stream = event.stream;
@@ -307,6 +362,8 @@ function onCreateSessionDescriptionError(error) {
     console.log('Failed to create session description: ' + error.toString());
 }
 
+
+
 function requestTurn(turnURL) {
     var turnExists = false;
     for (var i in pcConfig.iceServers) {
@@ -333,5 +390,7 @@ function requestTurn(turnURL) {
         };
         xhr.open('GET', turnURL, true);
         xhr.send();
+
+
     }
 }
