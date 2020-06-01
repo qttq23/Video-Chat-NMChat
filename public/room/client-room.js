@@ -45,6 +45,8 @@ socket.on('connect', () => {
     socket.emit('get id', (returnedId) => {
         localId = returnedId;
     });
+
+    
 });
 
 /////////////////////
@@ -89,6 +91,9 @@ socket.on('joined', function (room) {
     console.log('joined: ' + room);
     // isChannelReady = true;
     isInRoom = true;
+
+    // request messages in room
+    socket.emit('get messages');
 });
 
 ///////////////////////////////////////////////////////
@@ -99,6 +104,33 @@ console.log(remoteVideos);
 
 
 /////////////
+
+// send messages
+$('#btnSend').click(function(){
+
+    // get content in edit box
+    let content = $('#edtMessage').val();
+    // alert(content);
+
+    // send to socketio server
+    let message = {
+        from: userName,
+        to: 'all',
+        type: 'text',
+        content: content
+    }
+    socket.emit('msg', message);
+
+    // update local messages
+    $('#txtMessages').append('<br>' + 'you: ' + content);
+    $('#edtMessage').val('');
+});
+
+socket.on('msg', (message)=>{
+    console.log('msg received');
+    $('#txtMessages').append('<br>' + message.from + ': ' + message.content);
+});
+
 
 ///////////////
 
