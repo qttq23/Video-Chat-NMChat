@@ -72,13 +72,13 @@
 
     <div class="middle-div d-flex">
 
-        <button type="button" name="" id="btn-create" class="btn btn-warning" style="height: 100px; width: 100px;margin-right: 20px" btn-lg btn-block>
+        <button data-toggle="modal" data-target="#modalCreateRoom" type="button" name="" id="btn-create" class="btn btn-warning " style="height: 100px; width: 100px; margin-right: 20px" btn-lg btn-block>
+
 
             <i class="fa fa-plus-square" style="font-size: larger; color: black" aria-hidden="true">
                 Create
             </i>
         </button>
-
 
         <button data-toggle="modal" data-target="#modelJoinRoom" type="button" name="" id="btn-join" class="btn btn-primary " style="height: 100px; width: 100px; margin-right: 20px" btn-lg btn-block>
 
@@ -191,6 +191,43 @@
         </div>
     </div>
 
+    <!-- Create Dialog -->
+    <!-- Join dialog -->
+    <div class="modal fade" id="modalCreateRoom" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <h4 class="modal-title w-100 font-weight-bold">Create Room</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>
+                <div class="modal-body mx-3">
+                    <div class="md-form">
+                        <label for="">Meeting ID:</label>
+                        <input type="text" id="create-meeting-id" class="form-control validate">
+                    </div>
+
+                    <div class="md-form">
+                        <label for="">Your name:</label>
+                        <input type="text" id="create-name" class="form-control validate">
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="" id="create-audio-checkbox"> Don't connect to audio</label>
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" value="" id="create-video-checkbox"> Turn off my video</label>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+
+                    <button class="btn btn-indigo" id="btn-create-dialog"><i class="fa fa-camera" aria-hidden="true"> Create</i></button>
+
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 

@@ -15,3 +15,6 @@ var videoCheckbox = document.getElementById("video-checkbox");
 var btnLogin = document.getElementById("btn-login");
 var btnSignup = document.getElementById("btn-signup");
 var btnJoinDialog = document.getElementById("btn-join-dialog");
+var btnCreateDialog = document.getElementById("btn-create-dialog");
+var createAudioCheckbox = document.getElementById("create-audio-checkbox");
+var creteVideoCheckbox = document.getElementById("create-video-checkbox");
