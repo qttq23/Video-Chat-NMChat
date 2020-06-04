@@ -34,6 +34,7 @@ router.post('/login', async function(req, res) {
 
     // check valid account
     let result = await userModel.get_user_by_email(req.body.username);
+    console.log("start");
     console.log(result);
     console.log(result);
 

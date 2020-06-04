@@ -6,5 +6,5 @@ module.exports = {
     get_user_by_id: userId => db.query(`call get_user_by_id("${userId}")`).then(result => result[0]),
     remove: userId => db.query(`call remove_user_by_id("${userId}")`),
     change_password: (userId, newPwd, oldPwd) => db.query(`call change_user_password("${userId}","${newPwd}","${oldPwd}")`),
-    get_user_by_email: email => db.query(`call get_user_by_email("${email}")`)
+    get_user_by_email: email => db.query(`call get_user_by_email("${email}")`).then(result => result[0])
 }
