@@ -1,4 +1,3 @@
-
 const express = require('express');
 const userModel = require('../models/user.model');
 
@@ -7,7 +6,7 @@ module.exports = router;
 
 
 // login
-router.get('/login', function (req, res) {
+router.get('/login', function(req, res) {
 
     console.log('get login');
 
@@ -21,8 +20,7 @@ router.get('/login', function (req, res) {
         // };
         // req.session.account = account;
         // res.redirect('../home');
-    }
-    else {
+    } else {
         let url = req.headers.referer || '../home';
         console.log(`referer: ${req.headers.referer}`);
         console.log(`redirecting to ${url}`);
@@ -30,17 +28,17 @@ router.get('/login', function (req, res) {
     }
 });
 
-router.post('/login', async function (req, res) {
+router.post('/login', async function(req, res) {
 
     console.log(req.body);
 
     // check valid account
     let result = await userModel.get_user_by_email(req.body.username);
     console.log(result);
-    console.log(result[0][0]);
-    
-    let user = result[0][0];
-    if (!user || user.Password !== req.body.password){
+    console.log(result);
+
+    let user = result;
+    if (!user || user.Password !== req.body.password) {
         res.json({
             result: false,
             msg: 'sign in failed!'
@@ -48,7 +46,7 @@ router.post('/login', async function (req, res) {
         return;
     }
     // ...
-    
+
     req.session.isLogin = true;
     req.session.account = user;
     // res.redirect('../home');
