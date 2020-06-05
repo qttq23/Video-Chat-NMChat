@@ -100,10 +100,128 @@ console.log(remoteVideos);
 
 /////////////
 
+// micro button
+var count = 0;
+var isMicro = true;
+$('#btnMicro').click(function(){
+
+    count+=1;
+    if(count % 2 == 1){
+
+        alert('click stop');
+
+        // stop micro
+        isMicro = false;
+
+        let i;
+        for (i = 0; i < peers.length; i++) {
+            var peer = peers[i];
+            var connection = peers[i].connection;
+            peer.microSender.replaceTrack(null);
+        }
+
+        
+        $(this).html('enable micro');
+    }
+    else{
+
+        alert('click  start');
+
+        // start micro
+        isMicro = true;
+        let i;
+        for (i = 0; i < peers.length; i++) {
+            var peer = peers[i];
+            var connection = peers[i].connection;
+            peer.microSender.replaceTrack(microTrack);
+        }
+
+        $(this).html('stop micro');
+    }
+
+    
+});
+
+// video button
+var countClickVideo = 0;
+var isVideo = true;
+$('#btnVideo').click(function () {
+
+    countClickVideo += 1;
+    if (countClickVideo % 2 == 1) {
+
+        alert('click stop video');
+
+        // stop micro
+        isVideo = false;
+
+        let i;
+        for (i = 0; i < peers.length; i++) {
+            var peer = peers[i];
+            var connection = peers[i].connection;
+            peer.videoSender.replaceTrack(null);
+        }
+
+
+        $(this).html('start video');
+    }
+    else {
+
+        alert('click  start video');
+
+        // start micro
+        isVideo = true;
+        let i;
+        for (i = 0; i < peers.length; i++) {
+            var peer = peers[i];
+            var connection = peers[i].connection;
+            peer.videoSender.replaceTrack(camVideoTrack);
+        }
+
+        $(this).html('stop video');
+    }
+
+
+});
+
+
+// audio button
+var countClickAudio = 0;
+var isAudio = true;
+$('#btnAudio').click(function () {
+
+    countClickAudio += 1;
+    if (countClickAudio % 2 == 1) {
+
+        alert('click stop audio');
+
+        // stop audio
+        isAudio = false;
+
+        $(".remoteVideo").prop('muted', true);
+
+
+        $(this).html('start audio');
+    }
+    else {
+
+        alert('click  start audio');
+
+        // start micro
+        isAudio = true; 
+        $(".remoteVideo").prop('muted', false);
+
+        $(this).html('stop audio');
+    }
+
+
+});
+
+
 ///////////////
 
 navigator.mediaDevices.getUserMedia({
-    audio: false,
+    audio: true,
     video: true
 })
     .then(gotStream)
@@ -114,6 +232,7 @@ navigator.mediaDevices.getUserMedia({
 
 var camVideoTrack;
 var currentTrack;
+var microTrack;
 
 function gotStream(stream) {
     console.log('Adding local stream.');
@@ -123,6 +242,7 @@ function gotStream(stream) {
 
     camVideoTrack = localStream.getVideoTracks()[0];
     currentTrack = localStream.getVideoTracks()[0];
+    microTrack = localStream.getAudioTracks()[0];
 
     // while(!isInRoom || !isGotMedia){}
     var myTimeout = () => {
@@ -169,7 +289,15 @@ socket.on('got user media', (data) => {
     while (!isGotMedia) { }
     // connection.addStream(localStream);
     newPeer.videoSender = connection.addTrack(currentTrack, localStream);
-
+    newPeer.microSender = connection.addTrack(microTrack, localStream);
+    if(isMicro === false){
+        console.log('is micro: ' + isMicro);
+        newPeer.microSender.replaceTrack(null);
+    }
+    if (isVideo === false) {
+        console.log('is video: ' + isVideo);
+        newPeer.videoSender.replaceTrack(null);
+    }
 
     // send offer
     console.log('Sending offer to new peer');
@@ -206,7 +334,15 @@ socket.on('offer', (data) => {
         while (!isGotMedia) { }
         // connection.addStream(localStream);
         newPeer.videoSender = connection.addTrack(currentTrack, localStream);
-
+        newPeer.microSender = connection.addTrack(microTrack, localStream);
+        if (isMicro === false) {
+            console.log('is micro: ' + isMicro);
+            newPeer.microSender.replaceTrack(null);
+        }
+        if (isVideo === false) {
+            console.log('is video: ' + isVideo);
+            newPeer.videoSender.replaceTrack(null);
+        }
 
         // accept
         connection.setRemoteDescription(new RTCSessionDescription(data.message));
