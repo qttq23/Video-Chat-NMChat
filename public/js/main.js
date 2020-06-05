@@ -65,7 +65,7 @@ document.write("text from main.js");
     $("#login-button").click(function() {
         var username = $("#username").val();
         var password = $("#password").val();
-        alert(`${username} ${password}`);
+        // alert(`${username} ${password}`);
 
 
         // check abcxyz

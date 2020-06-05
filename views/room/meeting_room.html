@@ -15,11 +15,11 @@
         <div class=" w-75 col " style="background-color:darkgrey;">
 
             <div class="row w-100 video-call-parent" style="margin-left: 10px;">
-                <video class="video-call" id="remote-video-1" autoplay playsinline></video>
-                <video class="video-call" id="remote-video-2" autoplay playsinline></video>
-                <video class="video-call" id="remote-video-3" autoplay playsinline></video>
-                <video class="video-call" id="remote-video-4" autoplay playsinline></video>
-                <video class="video-call" id="remote-video-5" autoplay playsinline></video>
+                <video class="video-call localVideo" id="remote-video-1" autoplay playsinline></video>
+                <video class="video-call remoteVideo" id="remote-video-2" autoplay playsinline></video>
+                <video class="video-call remoteVideo" id="remote-video-3" autoplay playsinline></video>
+                <video class="video-call remoteVideo" id="remote-video-4" autoplay playsinline></video>
+                <video class="video-call remoteVideo" id="remote-video-5" autoplay playsinline></video>
             </div>
             <br>
             <br>
@@ -29,12 +29,15 @@
             <div class="group-button">
                 <a name="" id="mute-button" class="btn btn-primary rounded-button" href="#" role="button">
                     <i class="fa fa-microphone icon-call" aria-hidden="true"></i>
+                    stop micro
                 </a>
                 <a name="" id="stop-button" class="btn btn-danger rounded-button" href="#" role="button">
                     <i class="fa fa-phone icon-call" aria-hidden="true"></i>
+                    stop audio
                 </a>
                 <a name="" id="video-button" class="btn btn-primary rounded-button" href="#" role="button">
                     <i class="fa fa-video-camera icon-call" aria-hidden="true"></i>
+                    stop video
                 </a>
             </div>
         </div>
@@ -63,6 +66,18 @@
 
     <script src="https://code.jquery.com/jquery-3.1.1.min.js "></script>
     <script src="/public/js/meeting_room.js "></script>
+
+    <!-- ////////////////// -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script>
+        var roomName = '{{this.roomInfo.roomName}}';
+        var isHost = {{ this.isHost }};
+    </script>
+    <!-- This file is automatically added/served when running "node index.js". -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+    
+    <script src="/room/client-room.js"></script>
 </body>
 
 </html>

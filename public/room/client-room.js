@@ -93,7 +93,7 @@ socket.on('joined', function (room) {
 
 ///////////////////////////////////////////////////////
 
-var localVideo = document.querySelector('#localVideo');
+var localVideo = document.querySelector('.localVideo');
 var remoteVideos = document.getElementsByClassName("remoteVideo");
 console.log(remoteVideos);
 

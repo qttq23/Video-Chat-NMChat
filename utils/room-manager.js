@@ -15,8 +15,16 @@ module.exports = {
 
     },
 
-    canJoin: (roomName) => {
+    canJoin: (roomName, participant) => {
 
+        let i = 0;
+        for (i = 0; i < roomList.length; i++) {
+            if (roomList[i].roomName == roomName) {
+                return true;
+            }
+        }
+
+        return false;
     },
 
     create: (roomName, host) => {

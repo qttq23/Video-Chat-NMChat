@@ -139,25 +139,43 @@ app.post('/room/create', function(req, res){
     }
 });
 
-// app.post('/room/join', function (req, res) {
+app.post('/room/join', function (req, res) {
 
-//     console.log('post /room/join');
-//     console.log(req.session.account);
-//     console.log(req.body.roomName);
+    console.log('post /room/join');
+    console.log(req.session.account);
+    console.log(req.body.roomName);
 
-//     const roomName = req.body.roomName;
-//     const client = req.session.account;
-//     if (roomManager.canJoin(roomName)) {
-//         roomManager.join(roomName, account);
-//         res.redirect('/room?id=' + roomName);
-//     }
-//     else {
-//         res.json({
-//             result: false,
-//             message: 'cannot join room'
-//         });
-//     }
-// });
+    const roomName = req.body.roomName;
+    const participant = req.session.account;
+
+    // check restricts...
+    if (req.session.isAlreadyInRoom === true) {
+        res.json({
+            result: false,
+            msg: 'You are already in one room. leave room to join another room.'
+        });
+        return;
+    }
+
+
+
+    if (roomManager.canJoin(roomName, participant)) {
+        // roomManager.create(roomName, participant);
+        // res.redirect('/room?id=' + roomName);
+        res.json({
+            result: true,
+            redirect: '/room?id=' + roomName
+        });
+    }
+    else {
+        res.json({
+            result: false,
+            msg: 'cannot join room'
+        });
+    }
+});
+
+
 
 app.get('/room', function(req, res){
 
@@ -184,7 +202,8 @@ app.get('/room', function(req, res){
         isHost = true
     }
     
-    res.render('room/room',{
+    // if all ok, send room page
+    res.render('room/meeting_room',{
         roomInfo: roomInfo,
         isHost: isHost,
         userId: req.session.account.Email

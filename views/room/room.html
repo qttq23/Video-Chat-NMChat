@@ -30,11 +30,7 @@
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script>
         var roomName = '{{this.roomInfo.roomName}}';
-        var isHost = {
-            {
-                this.isHost
-            }
-        };
+        var isHost = {{this.isHost}};
     </script>
     <!-- This file is automatically added/served when running "node index.js". -->
     <script src="/socket.io/socket.io.js"></script>
