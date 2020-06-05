@@ -15,7 +15,7 @@
         <div class=" w-75 col " style="background-color:darkgrey;">
 
             <div class="row w-100 video-call-parent" style="margin-left: 10px;">
-                <video class="video-call localVideo" id="remote-video-1" autoplay playsinline></video>
+                <video class="video-call localVideo" id="remote-video-1" autoplay playsinline muted></video>
                 <video class="video-call remoteVideo" id="remote-video-2" autoplay playsinline></video>
                 <video class="video-call remoteVideo" id="remote-video-3" autoplay playsinline></video>
                 <video class="video-call remoteVideo" id="remote-video-4" autoplay playsinline></video>
@@ -27,15 +27,15 @@
                 <video class="video-call-large-screen col" id="remmote-video-large"></video>
             </div>
             <div class="group-button">
-                <a name="" id="mute-button" class="btn btn-primary rounded-button" href="#" role="button">
+                <a name="" id="btnMicro" class="btn btn-primary rounded-button" href="#" role="button">
                     <i class="fa fa-microphone icon-call" aria-hidden="true"></i>
                     stop micro
                 </a>
-                <a name="" id="stop-button" class="btn btn-danger rounded-button" href="#" role="button">
+                <a name="" id="btnAudio" class="btn btn-danger rounded-button" href="#" role="button">
                     <i class="fa fa-phone icon-call" aria-hidden="true"></i>
                     stop audio
                 </a>
-                <a name="" id="video-button" class="btn btn-primary rounded-button" href="#" role="button">
+                <a name="" id="btnVideo" class="btn btn-primary rounded-button" href="#" role="button">
                     <i class="fa fa-video-camera icon-call" aria-hidden="true"></i>
                     stop video
                 </a>

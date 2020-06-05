@@ -120,6 +120,7 @@ $('#btnMicro').click(function(){
             peer.microSender.replaceTrack(null);
         }
 
+
         
         $(this).html('enable micro');
     }
