@@ -95,6 +95,10 @@ app.get('/home', function(req, res){
 });
 
 
+// user profile
+const userRouter = require('./routes/user');
+app.use('/user', userRouter);
+
 // room
 const roomManager = require('./utils/room-manager');
 roomManager.startSocketIO();
