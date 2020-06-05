@@ -40,15 +40,15 @@
                         <div class="form-group">
                             <input type="text" class="form-input" name="phone" id="phone" placeholder="Phone" value="{{userProfile.PhoneNumber}}" />
                         </div>
-                        <p class="Title">Email</p>
+                        <!-- <p class="Title">Email</p>
                         <div class="form-group">
                             <input type="email" class="form-input" name="email" id="email" placeholder="Email" value="{{userProfile.Email}}" />
-                        </div>
+                        </div> -->
                         <p class="Title">Birthday</p>
                         <div class="form-group">
                             <input type="text" class="form-input" name="birthdate" id="birthday" placeholder="Birthday" value="{{userProfile.BirthDate}}" />
                         </div>
-                        <p class="Title">Password</p>
+                        <!-- <p class="Title">Password</p>
                         <div class="form-group">
                             <input type="password" class="form-input" name="cur_password" id="cur_password" placeholder="Current password" />
                         </div>
@@ -59,7 +59,7 @@
                         <p class="Title">Retype Password</p>
                         <div class="form-group">
                             <input type="password" class="form-input" name="re_password" id="re_password" placeholder="Repeat your password" />
-                        </div>
+                        </div> -->
                         <div class="">
 
                         </div>
@@ -90,7 +90,7 @@
                         </div>
                     </div>
                     <div class="col-xs-12 divider text-center">
-                        <div class="col-xs-12 col-sm-4 emphasis">
+                        <div class="col-xs-12 col-sm-4 emphasis" id="divBtnEdit">
                             <button type="button" id="button1" class="btn btn-success btn-block" data-toggle="modal" data-target="#myModal">Edit</button>
                         </div>
                         <div class="col-xs-12 col-sm-4 emphasis">
@@ -103,6 +103,15 @@
     </div>
 
 
+    <script>
+        let isEdit = {{this.isEdit}};
+        if(isEdit == false){
+            // $('#button1').prop('disabled', true);
+            $("#divBtnEdit").css("display", "none");
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="/js-client-server/xprofile.js "></script>
 </body>
 
 </html>

@@ -21,5 +21,5 @@ const pool = mysql.createPool({
 const pool_query = util.promisify(pool.query).bind(pool);
 
 module.exports = {
-    query: async(sql) => pool_query(sql).then(value => value[0]),
+    query: async(sql) => pool_query(sql).then(value => {console.log(value); return value[0]}),
 };
