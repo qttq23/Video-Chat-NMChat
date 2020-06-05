@@ -30,7 +30,7 @@ router.post('/profile', function(req, res) {
     console.log(req.body);
 
     const newProfile = req.body.profile;
-    const result = model.update(newProfile);
+    //const result = model.update(newProfile);
 
     if (result === true) {
         res.json({
