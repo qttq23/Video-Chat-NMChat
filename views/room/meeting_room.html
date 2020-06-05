@@ -29,7 +29,7 @@
             <div class="group-button">
                 <a name="" id="btnMicro" class="btn btn-primary rounded-button" href="#" role="button">
                     <i class="fa fa-microphone icon-call" aria-hidden="true"></i>
-                    stop micro
+                    enable micro
                 </a>
                 <a name="" id="btnAudio" class="btn btn-danger rounded-button" href="#" role="button">
                     <i class="fa fa-phone icon-call" aria-hidden="true"></i>
@@ -44,7 +44,7 @@
 
 
         <div class="w-25 " style="background-color: white; border-style:outset; border-color: grey; ">
-            <div style="overflow:scroll ; height:800px; margin-left: 10px ">
+            <div id="txtMessages" style="overflow:scroll ; height:800px; margin-left: 10px ">
                 {{#each messages}}
                 <p>{{message}}</p> {{/each}} </div>
             <div style="background-color:white ">
@@ -52,7 +52,7 @@
                     <label for=" "></label>
                     <input type="text " class="form-control " name=" " id="message" aria-describedby="helpId " placeholder=" ">
                     <br>
-                    <button type="submit " class="btn btn-primary ">Submit</button>
+                    <button id="btnSend" type="submit " class="btn btn-primary ">Submit</button>
                 </div>
             </div>
         </div>
@@ -72,6 +72,7 @@
     <script>
         var roomName = '{{this.roomInfo.roomName}}';
         var isHost = {{ this.isHost }};
+        var userName = '{{this.userId}}';
     </script>
     <!-- This file is automatically added/served when running "node index.js". -->
     <script src="/socket.io/socket.io.js"></script>

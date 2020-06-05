@@ -30,7 +30,8 @@ module.exports = {
     create: (roomName, host) => {
         roomList.push({
             roomName: roomName,
-            host: host
+            host: host,
+            messages: []
         });
 
         
@@ -155,6 +156,48 @@ module.exports = {
                 socket.myRoom = null;
 
                 
+            });
+
+            socket.on('msg', (message) => {
+                console.log('client sent msg');
+                console.log(message);
+
+                if(message.to === 'all'){
+                    // store to list messages in room
+                    let i;
+                    for (i = 0; i < roomList.length; i++) {
+                        if (roomList[i].roomName == socket.myRoom) {
+                            roomList[i].messages.push(message);
+                        }
+                    }
+
+                    // broadcast to all in room
+                    console.log('broadcast msg');
+                    socket.broadcast.in(socket.myRoom).emit('msg', message);
+                }
+                else{
+
+                }
+            });
+
+            socket.on('get messages', ()=>{
+                console.log('client get list messages');
+
+                let i;
+                for (i = 0; i < roomList.length; i++) {
+
+                    let room = roomList[i];
+                    if (room.roomName == socket.myRoom) {
+
+                        console.log('found client room');
+                        console.log('room now has ' + room.messages.length);
+
+                        let k;
+                        for(k = 0; k < room.messages.length; k++){
+                            socket.emit('msg', room.messages[k]);
+                        }
+                    }
+                }
             });
 
         });

@@ -17,6 +17,11 @@
     <h1>You: {{userId}}</h1>
     <h1>you are host: {{isHost}}</h1>
 
+    <div id="chatSection">
+        <div id="txtMessages"> no message</div>
+        <input id="edtMessage" type="text">
+        <button id="btnSend">send</button>
+    </div>
 
     <div id="videos">
         <button id="btnMicro">stop micro</button>
@@ -34,6 +39,7 @@
     <script>
         var roomName = '{{this.roomInfo.roomName}}';
         var isHost = {{this.isHost}};
+        var userName = '{{this.userId}}';
     </script>
     <!-- This file is automatically added/served when running "node index.js". -->
     <script src="/socket.io/socket.io.js"></script>

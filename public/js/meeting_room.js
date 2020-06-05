@@ -8,3 +8,7 @@ var input_message = document.getElementById("message");
 var mute_button = document.getElementById("mute-button");
 var stop_button = document.getElementById("stop-button");
 var video_button = document.getElementById("video-button");
+
+var btnSend = document.getElementById("btnSend");
+var txtMessages = document.getElementById("txtMessages");
+
