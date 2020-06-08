@@ -147,7 +147,8 @@ router.post('/upload', function(req, res){
         res.json({
             result: true,
             msg: 'File uploaded!',
-            path: `/upload/roomid/${file.name}`
+            path: `/upload/roomid/${file.name}`,
+            filename: `${file.name}`
         });
     });
 
