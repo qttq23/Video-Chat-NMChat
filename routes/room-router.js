@@ -120,7 +120,38 @@ router.post('/leave', function (req, res) {
 
     req.session.isAlreadyInRoom = false;
     res.json({ result: true });
-})
+});
+
+
+router.post('/upload', function(req, res){
+
+    console.log('post /room/upload');
+    // console.log(req.body);
+    // console.log(req.files);
+
+    // check if file exists
+    if (!req.files || Object.keys(req.files).length === 0) {
+        return res.json({result: false, msg: 'No files were uploaded.'});
+    }
+
+    // get file to save and path to save
+    let file = req.files.myfile;
+    let pathToSave = PUBLIC_PATH + `/upload/roomid/${file.name}`;
+    console.log(pathToSave);
+
+    // Use the mv() method to place the file somewhere on your server
+    file.mv(pathToSave, function (err) {
+        if (err)
+            return res.json({result: false, msg: err});
+
+        res.json({
+            result: true,
+            msg: 'File uploaded!',
+            path: `/upload/roomid/${file.name}`
+        });
+    });
+
+});
 
 
 

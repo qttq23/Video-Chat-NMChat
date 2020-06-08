@@ -6,6 +6,8 @@ var exphbs = require('express-handlebars');
 const http = require('http');
 const socketIO = require('socket.io');
 
+const fileUpload = require('express-fileupload');
+
 // create express app
 const app = express();
 
@@ -15,11 +17,19 @@ server.listen(process.env.PORT || 3000);
 
 // create socket.io server on same port as http
 global.io = socketIO(server);
+global.PUBLIC_PATH = `${__dirname}/public`;
 
 
 // view content of POST message
 app.use(express.urlencoded({
     extended: true
+})
+);
+
+// receive file upload
+app.use(fileUpload({
+    createParentPath: true,
+    // limits: { fileSize: 50 * 1024 * 1024 },
 })
 );
 

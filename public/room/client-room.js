@@ -64,7 +64,8 @@ $(window).on("beforeunload", function () {
         console.log(json);
     });
 
-})
+});
+
 
 
 //////////////////
