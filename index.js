@@ -90,9 +90,7 @@ app.use(async function(req, res, next){
 
 // default get
 app.get('/', function(req, res){
-
     res.redirect('/home');
-
 })
 
 // homepage
@@ -114,6 +112,16 @@ app.use('/user', userRouter);
 const roomRouter = require('./routes/room-router');
 app.use('/room', roomRouter);
 
+
+// join/leave history
+const historyModel = require('./models/join_history.model');
+app.get('/history', async function(req, res){
+    const result = await historyModel.all(req.session.account.id);
+
+    res.render('user/history', {
+        list: result
+    });
+});
 
 
 // create http server listen to port

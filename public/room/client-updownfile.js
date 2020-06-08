@@ -2,14 +2,16 @@
 
 // < !--form upload-- >
 $('#formUpload').submit(function () {
-
-
-
     // check abcxyz
     //...
 
     // submit
-    $(this).ajaxSubmit({
+    $.ajax({
+        type: 'POST',
+        url: "/room/upload",
+        data: new FormData($("#formUpload")[0]),
+        processData: false,
+        contentType: false,
         error: function (xhr) {
             status('Error: ' + xhr.status);
         },
@@ -45,4 +47,7 @@ $('#formUpload').submit(function () {
     //Very important line, it disable the page refresh.
     return false;
 });
+
+
+
 

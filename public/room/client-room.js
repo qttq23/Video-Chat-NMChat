@@ -52,6 +52,9 @@ socket.on('connect', () => {
 /////////////////////
 
 $(window).on("beforeunload", function () {
+
+
+    // tell http server that user leave room
     $.ajax({
         method: 'post',
         url: '/room/leave',
@@ -64,9 +67,28 @@ $(window).on("beforeunload", function () {
         console.log(json);
     });
 
+    // another signal will be automatically sent to SocketIO when client disconnected
 });
 
 
+
+// leave room
+$('#btnLeave').click(function(){
+
+    // alert ok & cancel
+    let isOk = confirm('Do you want to leave this room?');
+    
+    // if ok -> leave
+    if(isOk === true){
+
+
+        // just navigate to home
+        // unload event will be triggered
+        // leave room implemented in that
+        window.location.href = '/home';
+
+    }
+});
 
 //////////////////
 

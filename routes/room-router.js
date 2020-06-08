@@ -6,6 +6,8 @@ module.exports = router;
 const roomManager = require('../utils/room-manager');
 roomManager.startSocketIO();
 
+const historyModel = require('../models/join_history.model');
+
 
 
 router.post('/create', function (req, res) {
@@ -106,7 +108,15 @@ router.get('/', function (req, res) {
     if (roomInfo.host.Email === req.session.account.Email) {
         isHost = true
     }
-
+    
+    // // save history join room
+    // historyModel.saveJoin({
+    //     userId: req.session.account.Email,
+    //     roomId: roomInfo
+    // });
+    console.log('save join room ok');
+    
+    
     // if all ok, send room page
     res.render('room/meeting_room', {
         roomInfo: roomInfo,
@@ -118,8 +128,19 @@ router.get('/', function (req, res) {
 router.post('/leave', function (req, res) {
     console.log('leave room: ' + req.body.id);
 
+    // // save history leave room
+    // historyModel.saveLeave({
+    //     userId: req.session.account.Email,
+    //     roomId: roomInfo
+    // });
+    console.log('save leave room ok');
+
+
     req.session.isAlreadyInRoom = false;
-    res.json({ result: true });
+    res.json({ 
+        result: true,
+        redirect: '/home' 
+    });
 });
 
 
