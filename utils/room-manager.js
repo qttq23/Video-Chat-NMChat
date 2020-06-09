@@ -115,6 +115,15 @@ module.exports = {
                     socket.emit('created', room, socket.id);
                     socket.myRoom = room;
 
+                    // assign host for later check
+                    let i;
+                    for (i = 0; i < roomList.length; i++) {
+                        if (roomList[i].roomName == socket.myRoom) {
+                            socket.myHost = roomList[i].host;
+                            break;
+                        }
+                    }
+
                 } else if (1 <= numClients <= 3) {
                     log('Client ID ' + socket.id + ' joined room ' + room);
 
@@ -152,10 +161,27 @@ module.exports = {
             socket.on('disconnect', function () {
                 console.log('a client disconnected');
                 
+                
+
+                // check if just left is host
+                let i;
+                for (i = 0; i < roomList.length; i++) {
+                    if (roomList[i].roomName == socket.myRoom 
+                        && roomList[i].host == socket.myHost) {
+
+                        console.log('is host leave');
+                        // host here
+                        // force others to leave
+                        socket.broadcast.in(socket.myRoom).emit('force leave');
+                        break;
+                    }
+                }
+
                 socket.leave(socket.myRoom);
                 socket.myRoom = null;
-
+                socket.myHost = null;
                 
+
             });
 
 

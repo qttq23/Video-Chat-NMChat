@@ -76,7 +76,11 @@ $(window).on("beforeunload", function () {
 $('#btnLeave').click(function(){
 
     // alert ok & cancel
-    let isOk = confirm('Do you want to leave this room?');
+    let prompt = 'Do you want to leave this room?';
+    if(isHost){
+        prompt = 'Do you want to finish this room?';
+    }
+    let isOk = confirm(prompt);
     
     // if ok -> leave
     if(isOk === true){
@@ -89,6 +93,13 @@ $('#btnLeave').click(function(){
 
     }
 });
+
+socket.on('force leave', ()=>{
+    // host leave and force others to leave
+    // participant just leave
+    window.location.href = '/home';
+});
+
 
 //////////////////
 
