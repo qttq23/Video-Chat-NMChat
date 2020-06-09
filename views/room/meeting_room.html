@@ -68,7 +68,7 @@
                 </form>
                 
                 <button id="btnLeave" type="button">{{#if isHost}}finish{{else}}leave{{/if}}</button>
-
+                
                 {{#if isHost}}
                 <input type="text" id="edtKick" name="edtKick" placeholder="enter id to kick">
                 <button id="btnKick">kick</button>
@@ -97,7 +97,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
     
-    <script src="/room/client-room.js"></script>
+    <script type="text/javascript" src="/room/client-room.js"></script>
     <script src="/room/client-updownfile.js"></script>
 </body>
 

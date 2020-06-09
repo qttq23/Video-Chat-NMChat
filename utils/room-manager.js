@@ -174,7 +174,7 @@ module.exports = {
                         console.log('is host leave');
                         // host here
                         // force others to leave
-                        socket.broadcast.in(socket.myRoom).emit('force leave');
+                        socket.broadcast.in(socket.myRoom).emit('room finished');
                         break;
                     }
                 }
@@ -252,22 +252,8 @@ module.exports = {
                         break;
                     }
 
-                    //you can do whatever you need with this
-                    // clientSocket.emit('new event', "Updates");
 
                 }
-                // let i;
-                // for(i = 0; i < room.length; i++){
-                //     if(room[i].myId === userId){
-
-                //         console.log('found userId to kick');
-
-                //         // if match
-                //         // emit kick signal
-                //         room[i].emit('kicked');
-                //         break;
-                //     }
-                // }
             });
 
         });

@@ -94,11 +94,12 @@ $('#btnLeave').click(function(){
     }
 });
 
-socket.on('force leave', ()=>{
+
+socket.on('room finished', ()=>{
     // host leave and force others to leave
     // participant just leave
     alert('room was finished by host');
-    window.location.href = '/home';
+    window.location.href = '/unknown?state=roomfinished';
 });
 
 
@@ -112,11 +113,13 @@ $('#btnKick').click(function(){
     socket.emit('kick', userId);
 });
 
-socket.on('kicked', ()=>{
+socket.on('kicked', function(){
 
-    alert('host kicked you out');
-    window.location.href = '/home';
+    window.alert('host kicked you out');
+    window.location.href = '/unknown?state=kicked';
+
 });
+
 
 //////////////////
 

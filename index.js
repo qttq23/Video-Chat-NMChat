@@ -96,12 +96,29 @@ app.get('/', function(req, res){
 // homepage
 app.get('/home', function(req, res){
     // res.sendFile(__dirname + '/index.html');
+
+    let msg = req.session.pendingMsg;
+    req.session.pendingMsg = null;
     res.render('homepage/index', {
         isLogin: req.session.isLogin,
-        account: req.session.account
+        account: req.session.account,
+        msg: msg
     });
+    
 });
 
+app.get('/unknown', function(req, res){
+
+    let state = req.query.state;
+    if(state === 'kicked'){
+        req.session.pendingMsg = 'host kicked you out';
+    }
+    else if(state === 'roomfinished'){
+        req.session.pendingMsg = 'room was finished by host';
+    }
+    res.redirect('/home');
+
+});
 
 // user profile
 const userRouter = require('./routes/user-router');

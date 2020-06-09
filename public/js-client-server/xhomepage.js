@@ -1,4 +1,15 @@
 
+
+// onload
+$(()=>{
+    if(remoteMessage != ''
+    && remoteMessage != 'null'
+    && remoteMessage != 'undefined'){
+        // show dialog
+        alert(remoteMessage);
+    }
+});
+
 // $('#btn-join-dialog').click(function () {
 $(btnCreateDialog).click(function () {
 
