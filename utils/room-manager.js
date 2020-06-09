@@ -31,7 +31,11 @@ module.exports = {
         roomList.push({
             roomName: roomName,
             host: host,
-            messages: []
+            messages: [],
+            config: {
+                isVideo: true,   
+                isMicro: true 
+            }
         });
 
         
@@ -225,8 +229,14 @@ module.exports = {
                         for(k = 0; k < room.messages.length; k++){
                             socket.emit('msg', room.messages[k]);
                         }
+
+                        // also sent list of configs
+                        socket.emit('config', room.config);
                     }
                 }
+
+                
+
             });
 
             socket.on('kick', (userId)=>{
@@ -255,6 +265,23 @@ module.exports = {
 
                 }
             });
+
+            socket.on('set config', (config) => {
+                console.log('host set config');
+                console.log(config);
+
+                // store to config in room
+                let i;
+                for (i = 0; i < roomList.length; i++) {
+                    if (roomList[i].roomName == socket.myRoom) {
+                        roomList[i].config = config;
+                    }
+                }
+
+                // broadcast to all in room
+                socket.broadcast.in(socket.myRoom).emit('config', config);
+            });
+
 
         });
 

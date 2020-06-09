@@ -33,6 +33,10 @@ var peers = [];
 var isInRoom = false;
 var isGotMedia = false;
 
+var isMicro = false;
+var isVideo = true;
+var isAudio = true;
+var localConfig = null;
 /////////////////////////////////////////////
 
 var room = roomName;
@@ -98,11 +102,27 @@ $('#btnLeave').click(function(){
 socket.on('room finished', ()=>{
     // host leave and force others to leave
     // participant just leave
-    alert('room was finished by host');
     window.location.href = '/unknown?state=roomfinished';
 });
 
+socket.on('config', function(config){
+    
+    console.log(config);
+    localConfig = config;
 
+    // apply configs
+    if(config.isVideo === false){
+
+        isVideo = true;
+        $('#btnVideo').trigger('click');
+    }
+    if(config.isMicro === false){
+        
+        isMicro = true;
+        $('#btnMicro').trigger('click');
+        
+    }
+})
 
 //////////////////
 
@@ -115,7 +135,6 @@ $('#btnKick').click(function(){
 
 socket.on('kicked', function(){
 
-    window.alert('host kicked you out');
     window.location.href = '/unknown?state=kicked';
 
 });
@@ -138,6 +157,9 @@ socket.on('created', function (room) {
     console.log('Created room ' + room);
     // isInitiator = true;
     isInRoom = true;
+
+    // request messages in room
+    socket.emit('get messages');
 });
 
 
@@ -161,15 +183,11 @@ console.log(remoteVideos);
 
 
 // micro button
-var count = 0;
-var isMicro = false;
 $('#btnMicro').click(function(){
 
-    count+=1;
-    // if(count % 2 == 1){
     if(isMicro == true){
 
-        alert('click stop');
+        alert('click stop micro');
 
         // stop micro
         isMicro = false;
@@ -181,13 +199,17 @@ $('#btnMicro').click(function(){
             peer.microSender.replaceTrack(null);
         }
 
-
-        
         $(this).html('enable micro');
     }
     else{
+        // check config if can turn on micro
+        if(localConfig.isMicro === false){
+            alert('host not allow you to use micro');
+            return;
+        }
 
-        alert('click  start');
+
+        alert('click start micro');
 
         // start micro
         isMicro = true;
@@ -200,23 +222,22 @@ $('#btnMicro').click(function(){
 
         $(this).html('stop micro');
     }
-
-    
 });
 
 // video button
-var countClickVideo = 0;
-var isVideo = true;
 $('#btnVideo').click(function () {
 
-    countClickVideo += 1;
-    if (countClickVideo % 2 == 1) {
+    if (isVideo === true) {
 
         alert('click stop video');
 
-        // stop micro
+        // stop video
         isVideo = false;
 
+        // not show local
+        localVideo.srcObject = null;
+        
+        // not send to remotes
         let i;
         for (i = 0; i < peers.length; i++) {
             var peer = peers[i];
@@ -224,15 +245,24 @@ $('#btnVideo').click(function () {
             peer.videoSender.replaceTrack(null);
         }
 
-
         $(this).html('start video');
     }
     else {
+        // check config if can turn on video
+        if (localConfig.isVideo === false) {
+            alert('host not allow you to use video');
+            return;
+        }
 
-        alert('click  start video');
+        alert('click start video');
 
-        // start micro
+        // start video
         isVideo = true;
+
+        // show local
+        localVideo.srcObject = localStream;
+
+        // send to remotes
         let i;
         for (i = 0; i < peers.length; i++) {
             var peer = peers[i];
@@ -248,12 +278,9 @@ $('#btnVideo').click(function () {
 
 
 // audio button
-var countClickAudio = 0;
-var isAudio = true;
 $('#btnAudio').click(function () {
 
-    countClickAudio += 1;
-    if (countClickAudio % 2 == 1) {
+    if (isAudio === true) {
 
         alert('click stop audio');
 
@@ -277,6 +304,26 @@ $('#btnAudio').click(function () {
     }
 });
 
+
+$('#checkVideo').click(function () {
+    setConfig();
+});
+
+$('#checkMicro').click(function(){
+    setConfig();
+});
+
+function setConfig(){
+    
+    let config = {isVideo: false, isMicro: false};
+    config.isVideo = $("#checkVideo").is(':checked');
+    config.isMicro = $("#checkMicro").is(':checked');
+
+    console.log(config);
+    // send to remote
+    socket.emit('set config', config);
+
+}
 
 // send messages
 $(btnSend).click(function(){
@@ -328,6 +375,12 @@ function gotStream(stream) {
     localVideo.srcObject = stream;
     isGotMedia = true;
 
+    // apply config
+    if(isVideo === false){
+        localVideo.srcObject = null;
+    }
+
+    // get tracks
     camVideoTrack = localStream.getVideoTracks()[0];
     currentTrack = localStream.getVideoTracks()[0];
     microTrack = localStream.getAudioTracks()[0];
