@@ -97,9 +97,26 @@ $('#btnLeave').click(function(){
 socket.on('force leave', ()=>{
     // host leave and force others to leave
     // participant just leave
+    alert('room was finished by host');
     window.location.href = '/home';
 });
 
+
+
+//////////////////
+
+// kick participant
+$('#btnKick').click(function(){
+
+    let userId = $('#edtKick').val();
+    socket.emit('kick', userId);
+});
+
+socket.on('kicked', ()=>{
+
+    alert('host kicked you out');
+    window.location.href = '/home';
+});
 
 //////////////////
 
@@ -110,7 +127,7 @@ if (room !== '') {
     else{
 
     }
-    socket.emit('create or join', room);
+    socket.emit('create or join', room, userName);
     console.log('Attempted to create or  join room', room);
 }
 

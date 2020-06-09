@@ -100,7 +100,7 @@ module.exports = {
                 console.log(msg);
             }
 
-            socket.on('create or join', function (room) {
+            socket.on('create or join', function (room, userId) {
                 log('Received request to create or join room ' + room);
 
                 var clientsInRoom = io.sockets.adapter.rooms[room];
@@ -114,6 +114,7 @@ module.exports = {
                     socket.join(room);
                     socket.emit('created', room, socket.id);
                     socket.myRoom = room;
+                    socket.myId = userId;
 
                     // assign host for later check
                     let i;
@@ -137,6 +138,7 @@ module.exports = {
                     socket.emit('joined', room);
 
                     socket.myRoom = room;
+                    socket.myId = userId;
                     // socket.broadcast.in(room).emit('joined', room, socket.id);
                     // io.sockets.in(room).emit('ready');
                 } else { // max two clients
@@ -225,6 +227,47 @@ module.exports = {
                         }
                     }
                 }
+            });
+
+            socket.on('kick', (userId)=>{
+
+                // loop all client
+                let room = io.sockets.adapter.rooms[socket.myRoom];
+                let clients = room.sockets;
+
+                console.log(room);
+
+                for (var clientId in clients) {
+
+                    //this is the socket of each client in the room.
+                    var clientSocket = io.sockets.connected[clientId];
+
+                    if (clientSocket.myId === userId){
+
+                        console.log('found userId to kick');
+
+                        // if match
+                        // emit kick signal
+                        clientSocket.emit('kicked');
+                        break;
+                    }
+
+                    //you can do whatever you need with this
+                    // clientSocket.emit('new event', "Updates");
+
+                }
+                // let i;
+                // for(i = 0; i < room.length; i++){
+                //     if(room[i].myId === userId){
+
+                //         console.log('found userId to kick');
+
+                //         // if match
+                //         // emit kick signal
+                //         room[i].emit('kicked');
+                //         break;
+                //     }
+                // }
             });
 
         });

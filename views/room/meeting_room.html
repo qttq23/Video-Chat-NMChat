@@ -64,11 +64,15 @@
                  >
                     <label for="myfile">Select a file:</label>
                     <input type="file" id="myfile" name="myfile"><br>
-                    <input type="text" id="mytext" name="mytext"><br>
                     <input type="submit">
                 </form>
                 
                 <button id="btnLeave" type="button">{{#if isHost}}finish{{else}}leave{{/if}}</button>
+
+                {{#if isHost}}
+                <input type="text" id="edtKick" name="edtKick" placeholder="enter id to kick">
+                <button id="btnKick">kick</button>
+                {{/if}}
             </div>
         </div>
     </div>
