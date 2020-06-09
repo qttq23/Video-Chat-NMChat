@@ -97,6 +97,8 @@
         var roomName = '{{this.roomInfo.roomName}}';
         var isHost = {{ this.isHost }};
         var userName = '{{this.userId}}';
+
+        $('.video-call').attr('poster', '/images/icons/icon-google.png');
     </script>
     <!-- This file is automatically added/served when running "node index.js". -->
     <script src="/socket.io/socket.io.js"></script>

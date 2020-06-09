@@ -597,6 +597,34 @@ function createPeerConnection(toId) {
             remoteVideos[index].srcObject = event.stream;
         };
 
+        //https://stackoverflow.com/questions/60636439/webrtc-how-to-detect-when-a-stream-or-track-gets-removed-from-a-peerconnection
+        connection.ontrack = ({ track, streams: [stream] }) => {
+            track.onunmute = () => {
+                // if (!video.srcObject) video.srcObject = stream;
+                console.log('on ummute');
+                if (track.kind === 'video') {
+                    // replace video by stream
+                    var index = findIndexById(toId);
+                    remoteVideos[index].srcObject = stream;
+                }
+                
+            };
+            stream.onremovetrack = ({ track }) => {
+
+                console.log('on removetrack');
+            };
+            track.onmute = ()=>{
+                console.log('on mute');
+                console.log(track);
+
+                if(track.kind === 'video'){
+                    // replace video by image
+                    var index = findIndexById(toId);
+                    remoteVideos[index].srcObject = null;
+                }
+            };
+        };
+
 
         // connection.onremovestream = handleRemoteStreamRemoved;
         console.log('Created RTCPeerConnnection');
