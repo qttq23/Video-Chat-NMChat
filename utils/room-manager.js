@@ -282,6 +282,24 @@ module.exports = {
                 socket.broadcast.in(socket.myRoom).emit('config', config);
             });
 
+            socket.on('participants', ()=>{
+                // loop all client
+                let room = io.sockets.adapter.rooms[socket.myRoom];
+                let clients = room.sockets;
+
+
+                let listParticipants = [];
+                for (var clientId in clients) {
+
+                    //this is the socket of each client in the room.
+                    var clientSocket = io.sockets.connected[clientId];
+
+                    listParticipants.push(clientSocket.myId);
+                }
+
+                // send to requester
+                socket.emit('participants', listParticipants);
+            });
 
         });
 

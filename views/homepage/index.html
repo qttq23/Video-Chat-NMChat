@@ -43,32 +43,34 @@
 
             <div class="dropdown open dropleft">
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="triggerId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fa fa-user-circle" aria-hidden="true"></i>
+                    <i class="fa fa-user-circle" aria-hidden="true">
+                        {{#if isLogin}}
+                        {{this.account.Name}}
+                        {{/if}}
+                    </i>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="triggerId">
+
+                    {{#if isLogin}}
+                    <a class="dropdown-item" href="/user/profile">
+                        <i class="fa fa-info" aria-hidden="true"> Profile</i>
+                    </a>
+                    <button class="dropdown-item" href="#">
+                        <i class="fa fa-sign-out" aria-hidden="true"> Sign out</i>
+                    </button> {{else}}
                     <button class="dropdown-item" type="button" href="#" data-toggle="modal" data-target="#modalLoginForm">
                         <i class="fa fa-sign-in" aria-hidden="true"> Sign in</i>
                     </button>
                     <button class="dropdown-item" type="button" href="#" data-toggle="modal" data-target="#modelSignupForm">
                         <i class="fa fa-user-plus" aria-hidden="true"> Sign up</i>
-                    </button>
-                    <button class="dropdown-item" href="#">
-                        <i class="fa fa-sign-out" aria-hidden="true"> Sign out</i>
-                    </button>
+                    </button> {{/if}}
                 </div>
             </div>
         </div>
 
     </nav>
 
-    {{#if isLogin}}
-    <div class="user-infomation">
-        <h5 class="info-style">Account Information</h5>
-        <p class="info-style">UserID: {{this.account.UserID}}</p>
-        <p class="info-style">Name: {{this.account.Name}}</p>
-        <p class="info-style">Email: {{this.account.Email}}</p>
-    </div>
-    {{/if}}
+
 
     <div class="middle-div d-flex">
 
@@ -192,7 +194,6 @@
     </div>
 
     <!-- Create Dialog -->
-    <!-- Join dialog -->
     <div class="modal fade" id="modalCreateRoom" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 
         <div class="modal-dialog" role="document">
