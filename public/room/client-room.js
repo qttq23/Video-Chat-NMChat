@@ -14,43 +14,23 @@ var pcConfig = {
             'urls': 'stun:stun.l.google.com:19302'
         },
         {
-            'urls': 'stun:stun.stunprotocol.org:3478'
+            'urls': 'stun:stun2.l.google.com:19305'
         },
-        {
-            'urls': 'stun:stun4.l.google.com:19302'
-        },
-        {
-            'urls': 'stun:iphone-stun.strato-iphone.de:3478'
-        },
+
+
 
         {
             'urls': 'turn:numb.viagenie.ca',
-            'credential': 'bthang',
-            'username': '1753102@student.hcmus.edu.vn'
+            'credential': 'muazkh',
+            'username': 'webrtc@live.com'
         },
-        {
-            "urls": [
-                "turn:13.250.13.83:3478?transport=udp"
-            ],
-            "username": "YzYNCouZM1mhqhmseWk6",
-            "credential": "YzYNCouZM1mhqhmseWk6"
-        },
-
         {
             url: 'turn:numb.viagenie.ca',
             credential: 'muazkh',
             username: 'webrtc@live.com'
         },
-        {
-            url: 'turn:turn.bistri.com:80',
-            credential: 'homeo',
-            username: 'homeo'
-        },
-        {
-            url: 'turn:turn.anyfirewall.com:443?transport=tcp',
-            credential: 'webrtc',
-            username: 'webrtc'
-        },
+
+   
     ]
 };
 
