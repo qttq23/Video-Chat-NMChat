@@ -9,14 +9,34 @@ var remoteStream;
 var turnReady;
 
 var pcConfig = {
-    'iceServers': [{
-        'urls': 'stun:stun.l.google.com:19302'
-    },
-    {
-        'urls': 'turn:numb.viagenie.ca',
-        'credential': 'bthang',
-        'username': '1753102@student.hcmus.edu.vn'
-    }
+    'iceServers': [
+        {
+            'urls': 'stun:stun.l.google.com:19302'
+        },
+        // {
+        //     'urls': 'stun:stun2.l.google.com:19305'
+        // },
+
+
+
+        // {
+        //     'urls': 'turn:numb.viagenie.ca',
+        //     'credential': 'muazkh',
+        //     'username': 'webrtc@live.com'
+        // },
+        // {
+        //     url: 'turn:numb.viagenie.ca',
+        //     credential: 'muazkh',
+        //     username: 'webrtc@live.com'
+        // },
+
+        {
+            'urls': 'turn:numb.viagenie.ca',
+            'credential': 'irous',
+            'username': 'buithang1999a@gmail.com'
+        },
+
+   
     ]
 };
 
@@ -308,6 +328,7 @@ $('#btnAudio').click(function () {
         // start micro
         isAudio = true;
         isAudioEnable = isAudio;
+
         $(".remoteVideo").prop('muted', false);
 
         // $(this).html('stop audio');
@@ -337,8 +358,6 @@ function setConfig() {
 
 // send messages
 $(btnSend).click(function () {
-
-    console.log('btnSend clicked');
 
     // get content in edit box
     let content = $(input_message).val();
@@ -660,11 +679,13 @@ function createPeerConnection(toId) {
             track.onunmute = () => {
                 // if (!video.srcObject) video.srcObject = stream;
                 console.log('on ummute');
-                if (track.kind === 'video') {
-                    // replace video by stream
-                    var index = findIndexById(toId);
-                    remoteVideos[index].srcObject = stream;
-                }
+
+                // if (track.kind === 'video') {
+                //     // replace video by stream
+                //     var index = findIndexById(toId);
+                //     remoteVideos[index].srcObject = stream;
+                // }
+
 
             };
             stream.onremovetrack = ({ track }) => {
@@ -675,11 +696,12 @@ function createPeerConnection(toId) {
                 console.log('on mute');
                 console.log(track);
 
-                if (track.kind === 'video') {
-                    // replace video by image
-                    var index = findIndexById(toId);
-                    remoteVideos[index].srcObject = null;
-                }
+
+                // if (track.kind === 'video') {
+                //     // replace video by image
+                //     var index = findIndexById(toId);
+                //     remoteVideos[index].srcObject = null;
+                // }
             };
         };
 
