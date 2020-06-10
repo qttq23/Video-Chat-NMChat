@@ -28,6 +28,13 @@ var pcConfig = {
             'credential': 'bthang',
             'username': '1753102@student.hcmus.edu.vn'
         },
+        {
+            "urls": [
+                "turn:13.250.13.83:3478?transport=udp"
+            ],
+            "username": "YzYNCouZM1mhqhmseWk6",
+            "credential": "YzYNCouZM1mhqhmseWk6"
+        },
 
         {
             url: 'turn:numb.viagenie.ca',
