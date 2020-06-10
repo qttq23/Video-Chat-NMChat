@@ -211,6 +211,7 @@ $('#btnMicro').click(function () {
 
         // stop micro
         isMicro = false;
+        isMicroEnable = isMicro;
 
         let i;
         for (i = 0; i < peers.length; i++) {
@@ -219,7 +220,7 @@ $('#btnMicro').click(function () {
             peer.microSender.replaceTrack(null);
         }
 
-        $(this).html('enable micro');
+        // $(this).html('enable micro');
     }
     else {
         // check config if can turn on micro
@@ -233,6 +234,7 @@ $('#btnMicro').click(function () {
 
         // start micro
         isMicro = true;
+        isMicroEnable = isMicro;
         let i;
         for (i = 0; i < peers.length; i++) {
             var peer = peers[i];
@@ -240,7 +242,7 @@ $('#btnMicro').click(function () {
             peer.microSender.replaceTrack(microTrack);
         }
 
-        $(this).html('stop micro');
+        // $(this).html('stop micro');
     }
 });
 
@@ -253,6 +255,8 @@ $('#btnVideo').click(function () {
 
         // stop video
         isVideo = false;
+        isCallEnable = isVideo;
+        camVideoTrack.enabled = false;
 
         // not show local
         localVideo.srcObject = null;
@@ -265,7 +269,9 @@ $('#btnVideo').click(function () {
             peer.videoSender.replaceTrack(null);
         }
 
-        $(this).html('start video');
+
+
+        // $(this).html('start video');
     }
     else {
         // check config if can turn on video
@@ -278,6 +284,8 @@ $('#btnVideo').click(function () {
 
         // start video
         isVideo = true;
+        isCallEnable = isVideo;
+        camVideoTrack.enabled = true;
 
         // show local
         localVideo.srcObject = localStream;
@@ -290,7 +298,7 @@ $('#btnVideo').click(function () {
             peer.videoSender.replaceTrack(camVideoTrack);
         }
 
-        $(this).html('stop video');
+        // $(this).html('stop video');
     }
 
 
@@ -306,11 +314,12 @@ $('#btnAudio').click(function () {
 
         // stop audio
         isAudio = false;
+        isAudioEnable = isAudio;
 
         $(".remoteVideo").prop('muted', true);
 
 
-        $(this).html('start audio');
+        // $(this).html('start audio');
     }
     else {
 
@@ -318,9 +327,12 @@ $('#btnAudio').click(function () {
 
         // start micro
         isAudio = true;
+
+        isAudioEnable = isAudio;
+
         $(".remoteVideo").prop('muted', false);
 
-        $(this).html('stop audio');
+        // $(this).html('stop audio');
     }
 });
 
@@ -350,7 +362,8 @@ $(btnSend).click(function () {
 
     // get content in edit box
     let content = $(input_message).val();
-    // alert(content);
+    console.log(content);
+
 
     // send to socketio server
     let message = {
@@ -372,6 +385,51 @@ socket.on('msg', (message) => {
 
 });
 
+
+/// get list participants
+$(btnParticipants).click(function () {
+
+    // request list of participants
+    socket.emit('participants');
+});
+
+socket.on('participants', (participants) => {
+
+    // clear old data
+    let divParticipants = $('#divParticipants');
+    divParticipants.html('');
+
+    // append new data
+    let i;
+    for (i = 0; i < participants.length; i++) {
+
+        let name = participants[i];
+        if (name === userName){
+            name += ' <b>(You)</b>';
+        }
+
+        let html = `
+            <div class="participant-cell">
+                <span>${name}</span>
+                <div class="cell-options">
+                    <a name="" id="mute-participant" class="btn btn-danger diagonal-line" href="#"
+                        role="button">
+                        <i class="fa fa-volume-up" aria-hidden="true"></i>
+                    </a>
+                    <a name="" id="disable-camera-participant" class="btn btn-danger diagonal-line" href="#"
+                        role="button">
+                        <i class="fa fa-video-camera" aria-hidden="true"></i>
+                    </a>
+                </div>
+                <br>
+                <br>
+                <hr>
+            </div>
+            `;
+        
+        divParticipants.append(html);
+    }
+});
 
 ///////////////
 
@@ -622,6 +680,7 @@ function createPeerConnection(toId) {
             track.onunmute = () => {
                 // if (!video.srcObject) video.srcObject = stream;
                 console.log('on ummute');
+
                 // if (track.kind === 'video') {
                 //     // replace video by stream
                 //     var index = findIndexById(toId);
@@ -636,6 +695,7 @@ function createPeerConnection(toId) {
             track.onmute = () => {
                 console.log('on mute');
                 console.log(track);
+
 
                 // if (track.kind === 'video') {
                 //     // replace video by image
