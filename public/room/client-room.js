@@ -14,13 +14,13 @@ var pcConfig = {
             'urls': 'stun:stun.l.google.com:19302'
         },
         {
-            'urls': 'stun.stunprotocol.org:3478'
+            'urls': 'stun:stun.stunprotocol.org:3478'
         },
         {
-            'urls': 'stun4.l.google.com:19302'
+            'urls': 'stun:stun4.l.google.com:19302'
         },
         {
-            'urls': 'iphone-stun.strato-iphone.de:3478'
+            'urls': 'stun:iphone-stun.strato-iphone.de:3478'
         },
 
         {
