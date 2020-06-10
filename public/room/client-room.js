@@ -616,11 +616,11 @@ function createPeerConnection(toId) {
             track.onunmute = () => {
                 // if (!video.srcObject) video.srcObject = stream;
                 console.log('on ummute');
-                if (track.kind === 'video') {
-                    // replace video by stream
-                    var index = findIndexById(toId);
-                    remoteVideos[index].srcObject = stream;
-                }
+                // if (track.kind === 'video') {
+                //     // replace video by stream
+                //     var index = findIndexById(toId);
+                //     remoteVideos[index].srcObject = stream;
+                // }
 
             };
             stream.onremovetrack = ({ track }) => {
@@ -631,11 +631,11 @@ function createPeerConnection(toId) {
                 console.log('on mute');
                 console.log(track);
 
-                if (track.kind === 'video') {
-                    // replace video by image
-                    var index = findIndexById(toId);
-                    remoteVideos[index].srcObject = null;
-                }
+                // if (track.kind === 'video') {
+                //     // replace video by image
+                //     var index = findIndexById(toId);
+                //     remoteVideos[index].srcObject = null;
+                // }
             };
         };
 
