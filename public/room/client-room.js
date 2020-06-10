@@ -13,21 +13,27 @@ var pcConfig = {
         {
             'urls': 'stun:stun.l.google.com:19302'
         },
-        {
-            'urls': 'stun:stun2.l.google.com:19305'
-        },
+        // {
+        //     'urls': 'stun:stun2.l.google.com:19305'
+        // },
 
 
+
+        // {
+        //     'urls': 'turn:numb.viagenie.ca',
+        //     'credential': 'muazkh',
+        //     'username': 'webrtc@live.com'
+        // },
+        // {
+        //     url: 'turn:numb.viagenie.ca',
+        //     credential: 'muazkh',
+        //     username: 'webrtc@live.com'
+        // },
 
         {
             'urls': 'turn:numb.viagenie.ca',
-            'credential': 'muazkh',
-            'username': 'webrtc@live.com'
-        },
-        {
-            url: 'turn:numb.viagenie.ca',
-            credential: 'muazkh',
-            username: 'webrtc@live.com'
+            'credential': 'irous',
+            'username': 'buithang1999a@gmail.com'
         },
 
    
