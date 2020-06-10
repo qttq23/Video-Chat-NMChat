@@ -16,13 +16,13 @@
     margin-left: 220px;
     border-style: outset;
     border-color: grey;
-    min-height: 72vh;
+    min-height: 70vh;
 }
 
 .group-button {
     align-items: center;
-    justify-content: center;
     display: flex;
+    width: 100%;
 }
 
 .rounded-button {
@@ -41,4 +41,48 @@
     left: 50%;
     transform: translate(-50%, -50%);
     display: block;
+}
+
+.diagonal-line {
+    background: linear-gradient(to bottom right, transparent calc(50% - 1px), black calc(50% - 1px), black 50%, transparent 50%);
+}
+
+.leave-meeting {
+    float: right;
+    margin-right: 0px;
+    margin-left: auto;
+}
+
+.send-text {
+    margin-left: 8px;
+    margin-bottom: 32px;
+}
+
+.attachment {
+    margin-left: 8px;
+    margin-bottom: 32px;
+}
+
+.option-chat {
+    align-items: center;
+    display: flex;
+    width: 100%;
+}
+
+.participants {
+    margin-left: 8px;
+    margin-bottom: 0px;
+    margin-top: 16px;
+}
+
+.participant-cell {
+    display: block;
+    align-items: center;
+    width: 100%;
+}
+
+.cell-options {
+    /* margin-right: 0px;
+    margin-left: auto; */
+    float: right;
 }
