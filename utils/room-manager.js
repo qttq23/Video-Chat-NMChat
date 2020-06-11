@@ -34,7 +34,8 @@ module.exports = {
             messages: [],
             config: {
                 isVideo: true,   
-                isMicro: true 
+                isMicro: true,
+                isAudio: true
             }
         });
 

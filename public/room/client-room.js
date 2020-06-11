@@ -53,9 +53,9 @@ var peers = [];
 var isInRoom = false;
 var isGotMedia = false;
 
-var isMicro = false;
-var isVideo = true;
-var isAudio = true;
+// var isMicro = false;
+// var isVideo = true;
+// var isAudio = true;
 
 var camVideoTrack;
 var currentTrack;
@@ -67,7 +67,7 @@ var microTrack;
 // but use video and audio
 var currentState = {
     isMicro: false,
-    isCamera: true,
+    isVideo: true,
     isAudio: true,
 };
 
@@ -305,21 +305,21 @@ function canUseMicro(){
         return roomConfig.isMicro;
     }
 
-    return currentState.isMicro;
+    return true;
 }
 function canUseVideo(){
     if(roomConfig != null){
         return roomConfig.isVideo;
     }
 
-    return currentState.isVideo;
+    return true;
 }
 function canUseAudio() {
     if (roomConfig != null) {
         return roomConfig.isAudio;
     }
 
-    return currentState.isAudio;
+    return true;
 }
 
 
@@ -417,7 +417,11 @@ $('#checkMicro').click(function () {
 
 function setConfig() {
 
-    let config = { isVideo: false, isMicro: false };
+    let config = { 
+        isVideo: true, 
+        isMicro: true,
+        isAudio: true,
+    };
     config.isVideo = $("#checkVideo").is(':checked');
     config.isMicro = $("#checkMicro").is(':checked');
 
@@ -552,10 +556,6 @@ function gotStream(stream) {
 
 }
 
-var constraints = {
-    video: true
-};
-
 
 
 ///////////////////////////////////////////////////////
@@ -578,10 +578,10 @@ socket.on('got user media', (data) => {
     // connection.addStream(localStream);
     newPeer.videoSender = connection.addTrack(currentTrack, localStream);
     newPeer.microSender = connection.addTrack(microTrack, localStream);
-    if (canUseMicro() === false) {
+    if (currentState.isMicro === false) {
         newPeer.microSender.replaceTrack(null);
     }
-    if (canUseVideo() === false) {
+    if (currentState.isVideo === false) {
         newPeer.videoSender.replaceTrack(null);
     }
 
@@ -621,10 +621,10 @@ socket.on('offer', (data) => {
         // connection.addStream(localStream);
         newPeer.videoSender = connection.addTrack(currentTrack, localStream);
         newPeer.microSender = connection.addTrack(microTrack, localStream);
-        if (canUseMicro() === false) {
+        if (currentState.isMicro === false) {
             newPeer.microSender.replaceTrack(null);
         }
-        if (canUseVideo() === false) {
+        if (currentState.isVideo === false) {
             newPeer.videoSender.replaceTrack(null);
         }
 

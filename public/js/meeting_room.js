@@ -48,25 +48,26 @@ let isCallEnable = true;
 // });
 
 
+// isOn is desired state
 function toggleMicroButton(isOn) {
     if (isOn === true) {
-        $('#btnMicro').addClass('diagonal-line');
-    } else {
         $('#btnMicro').removeClass('diagonal-line');
+    } else {
+        $('#btnMicro').addClass('diagonal-line');
     }
 }
 function toggleAudioButton(isOn) {
     if (isOn === true) {
-        $('#btnAudio').addClass('diagonal-line');
-    } else {
         $('#btnAudio').removeClass('diagonal-line');
+    } else {
+        $('#btnAudio').addClass('diagonal-line');
     }
 }
 function toggleVideoButton(isOn) {
     if (isOn === true) {
-        $('#btnVideo').addClass('diagonal-line');
-    } else {
         $('#btnVideo').removeClass('diagonal-line');
+    } else {
+        $('#btnVideo').addClass('diagonal-line');
     }
 }
 
