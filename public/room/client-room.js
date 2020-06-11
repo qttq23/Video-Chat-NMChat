@@ -505,6 +505,17 @@ socket.on('participants', (participants) => {
     }
 });
 
+socket.on('peer out', (peerId)=>{
+    
+    
+    // remove logic
+    // let peer = findPeerById(peerId);
+    // peers.pop(peer);
+
+    // remove ui
+    let i = findIndexById(peerId);
+    remoteVideos[i].style.display = "none";
+});
 ///////////////
 
 navigator.mediaDevices.getUserMedia({
@@ -783,7 +794,7 @@ function createPeerConnection(toId) {
 }
 
 function findPeerById(id) {
-    var i;
+    let i;
     for (i = 0; i < peers.length; i++) {
         if (peers[i].id == id) {
             return peers[i];
@@ -793,7 +804,7 @@ function findPeerById(id) {
 }
 
 function findIndexById(id) {
-    var i;
+    let i;
     for (i = 0; i < peers.length; i++) {
         if (peers[i].id == id) {
             return i;

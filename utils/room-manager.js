@@ -184,6 +184,7 @@ module.exports = {
                     }
                 }
 
+                socket.broadcast.in(socket.myRoom).emit('peer out', socket.id);
                 socket.leave(socket.myRoom);
                 socket.myRoom = null;
                 socket.myHost = null;
