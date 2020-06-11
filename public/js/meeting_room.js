@@ -18,53 +18,62 @@ let isMicroEnable = false;
 let isAudioEnable = true;
 let isCallEnable = true;
 
-$('#btnMicro').click(function() {
-    if (isMicroEnable) {
+// $('#btnMicro').click(function() {
+//     if (isMicroEnable) {
+//         $('#btnMicro').addClass('diagonal-line');
+//     } else {
+//         $('#btnMicro').removeClass('diagonal-line');
+//     }
+//     isMicroEnable = !isMicroEnable;
+// });
+
+
+// $('#btnAudio').click(function() {
+//     if (isAudioEnable) {
+//         $('#btnAudio').addClass('diagonal-line');
+//     } else {
+//         $('#btnAudio').removeClass('diagonal-line');
+//     }
+//     isAudioEnable = !isAudioEnable;
+// });
+
+
+// $('#btnVideo').click(function() {
+//     if (isCallEnable) {
+//         $('#btnVideo').addClass('diagonal-line');
+//     } else {
+//         $('#btnVideo').removeClass('diagonal-line');
+//     }
+//     isCallEnable = !isCallEnable;
+// });
+
+
+function toggleMicroButton(isOn) {
+    if (isOn === true) {
         $('#btnMicro').addClass('diagonal-line');
     } else {
         $('#btnMicro').removeClass('diagonal-line');
     }
-    isMicroEnable = !isMicroEnable;
-});
-
-$('#btnAudio').click(function() {
-    if (isAudioEnable) {
+}
+function toggleAudioButton(isOn) {
+    if (isOn === true) {
         $('#btnAudio').addClass('diagonal-line');
     } else {
         $('#btnAudio').removeClass('diagonal-line');
     }
-    isAudioEnable = !isAudioEnable;
-});
-
-
-$('#btnVideo').click(function() {
-    if (isCallEnable) {
+}
+function toggleVideoButton(isOn) {
+    if (isOn === true) {
         $('#btnVideo').addClass('diagonal-line');
     } else {
         $('#btnVideo').removeClass('diagonal-line');
     }
-    isCallEnable = !isCallEnable;
-});
+}
 
 $(()=>{
-    // apply video, micro, audio config
-    if (isMicroEnable) {
-        $('#btnMicro').removeClass('diagonal-line');
-    } else {
-        $('#btnMicro').addClass('diagonal-line');
-    }
-
-    if (isAudioEnable) {
-        $('#btnAudio').removeClass('diagonal-line');
-    } else {
-        $('#btnAudio').addClass('diagonal-line');
-    }
-
-    if (isCallEnable) {
-        $('#btnVideo').removeClass('diagonal-line');
-    } else {
-        $('#btnVideo').addClass('diagonal-line');
-    }
+    toggleMicroButton(false);
+    toggleVideoButton(true);
+    toggleAudioButton(true);
 
 
 });

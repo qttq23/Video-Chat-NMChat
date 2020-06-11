@@ -56,7 +56,24 @@ var isGotMedia = false;
 var isMicro = false;
 var isVideo = true;
 var isAudio = true;
-var localConfig = null;
+
+var camVideoTrack;
+var currentTrack;
+var microTrack;
+
+
+// status of devices are being used
+// by default, participant will not use micro
+// but use video and audio
+var currentState = {
+    isMicro: false,
+    isCamera: true,
+    isAudio: true,
+};
+
+// rules of room to use or not use devices
+var roomConfig = null;
+
 /////////////////////////////////////////////
 
 var room = roomName;
@@ -125,24 +142,6 @@ socket.on('room finished', () => {
     window.location.href = '/unknown?state=roomfinished';
 });
 
-socket.on('config', function (config) {
-
-    console.log(config);
-    localConfig = config;
-
-    // apply configs
-    if (config.isVideo === false) {
-
-        isVideo = true;
-        $('#btnVideo').trigger('click');
-    }
-    if (config.isMicro === false) {
-
-        isMicro = true;
-        $('#btnMicro').trigger('click');
-
-    }
-})
 
 //////////////////
 
@@ -178,7 +177,7 @@ socket.on('created', function (room) {
     // isInitiator = true;
     isInRoom = true;
 
-    // request messages in room
+    // request messages and configs in room
     socket.emit('get messages');
 });
 
@@ -188,9 +187,141 @@ socket.on('joined', function (room) {
     // isChannelReady = true;
     isInRoom = true;
 
-    // request messages in room
+    // request messages and configs in room
     socket.emit('get messages');
 });
+
+// receive room configs
+socket.on('config', function (config) {
+
+    console.log(config);
+    roomConfig = config;
+
+    // apply configs
+    applyConfig(roomConfig);
+});
+
+// after this function
+// current state will be updated
+function applyConfig(config){
+    
+    if(config.isVideo === false){
+        turnOnVideo(false);
+    }
+    if(config.isMicro === false){
+        turnOnMicro(false);
+    }
+    if(config.isAudio === false){
+        turnOnAudio(false);
+    }
+    
+}
+
+function turnOnVideo(isOn){
+    if(isOn === true){
+        // start video
+        // ...
+        
+        // start show local
+        localVideo.srcObject = localStream;
+        
+        // start send to remotes
+        let i;
+        for (i = 0; i < peers.length; i++) {
+            var peer = peers[i];
+            var connection = peers[i].connection;
+            peer.videoSender.replaceTrack(camVideoTrack);
+        }
+    }
+    else{
+        // stop camera
+        // ...
+
+        // stop send remote
+        let i;
+        for (i = 0; i < peers.length; i++) {
+            var peer = peers[i];
+            var connection = peers[i].connection;
+            peer.videoSender.replaceTrack(null);
+        }
+
+        // stop show local
+        localVideo.srcObject = null;
+
+    }
+
+    // set current state
+    currentState.isVideo = isOn;
+    toggleVideoButton(isOn);
+}
+function turnOnMicro(isOn) {
+    if (isOn === true) {
+        // start micro
+        // ...
+
+        // start send to remotes
+        let i;
+        for (i = 0; i < peers.length; i++) {
+            var peer = peers[i];
+            var connection = peers[i].connection;
+            peer.microSender.replaceTrack(microTrack);
+        }
+
+    }
+    else {
+        // stop micro
+        // ...
+
+        // stop send remote
+        let i;
+        for (i = 0; i < peers.length; i++) {
+            var peer = peers[i];
+            var connection = peers[i].connection;
+            peer.microSender.replaceTrack(null);
+        }
+    }
+
+    // set current state
+    currentState.isMicro = isOn;
+    toggleMicroButton(isOn);
+}
+function turnOnAudio(isOn) {
+    if (isOn === true) {
+        // start hear audio
+        $(".remoteVideo").prop('muted', false);
+    }
+    else {
+        // stop hear audio
+        $(".remoteVideo").prop('muted', true);
+    }
+
+    // set current state
+    currentState.isAudio = isOn;
+    toggleAudioButton(isOn);
+}
+
+function canUseMicro(){
+    if(roomConfig != null){
+        return roomConfig.isMicro;
+    }
+
+    return currentState.isMicro;
+}
+function canUseVideo(){
+    if(roomConfig != null){
+        return roomConfig.isVideo;
+    }
+
+    return currentState.isVideo;
+}
+function canUseAudio() {
+    if (roomConfig != null) {
+        return roomConfig.isAudio;
+    }
+
+    return currentState.isAudio;
+}
+
 
 ///////////////////////////////////////////////////////
 
@@ -202,141 +333,80 @@ console.log(remoteVideos);
 /////////////
 
 
-// micro button
-$('#btnMicro').click(function () {
-
-    if (isMicro == true) {
-
-        alert('click stop micro');
-
-        // stop micro
-        isMicro = false;
-        isMicroEnable = isMicro;
-
-        let i;
-        for (i = 0; i < peers.length; i++) {
-            var peer = peers[i];
-            var connection = peers[i].connection;
-            peer.microSender.replaceTrack(null);
-        }
-
-        // $(this).html('enable micro');
-    }
-    else {
-        // check config if can turn on micro
-        if (localConfig.isMicro === false) {
-            alert('host not allow you to use micro');
-            return;
-        }
-
-
-        alert('click start micro');
-
-        // start micro
-        isMicro = true;
-        isMicroEnable = isMicro;
-        let i;
-        for (i = 0; i < peers.length; i++) {
-            var peer = peers[i];
-            var connection = peers[i].connection;
-            peer.microSender.replaceTrack(microTrack);
-        }
-
-        // $(this).html('stop micro');
-    }
-});
 
 // video button
 $('#btnVideo').click(function () {
 
-    if (isVideo === true) {
+    if (currentState.isVideo === true) {
 
         alert('click stop video');
-
-        // stop video
-        isVideo = false;
-        isCallEnable = isVideo;
-        camVideoTrack.enabled = false;
-
-        // not show local
-        localVideo.srcObject = null;
-
-        // not send to remotes
-        let i;
-        for (i = 0; i < peers.length; i++) {
-            var peer = peers[i];
-            var connection = peers[i].connection;
-            peer.videoSender.replaceTrack(null);
-        }
-
-
-
-        // $(this).html('start video');
+        
+        turnOnVideo(false);
+        
     }
     else {
         // check config if can turn on video
-        if (localConfig.isVideo === false) {
+        if (canUseVideo() === false) {
             alert('host not allow you to use video');
             return;
         }
 
         alert('click start video');
-
-        // start video
-        isVideo = true;
-        isCallEnable = isVideo;
-        camVideoTrack.enabled = true;
-
-        // show local
-        localVideo.srcObject = localStream;
-
-        // send to remotes
-        let i;
-        for (i = 0; i < peers.length; i++) {
-            var peer = peers[i];
-            var connection = peers[i].connection;
-            peer.videoSender.replaceTrack(camVideoTrack);
-        }
-
-        // $(this).html('stop video');
+        turnOnVideo(true);
     }
 
 
 });
 
+// micro button
+$('#btnMicro').click(function () {
+
+
+    if (currentState.isMicro === true) {
+
+        alert('click stop micro');
+
+        turnOnMicro(false);
+
+    }
+    else {
+        // check config if can turn on video
+        if (canUseMicro() === false) {
+            alert('host not allow you to use micro');
+            return;
+        }
+
+        alert('click start micro');
+        turnOnMicro(true);
+    }
+
+});
 
 // audio button
 $('#btnAudio').click(function () {
 
-    if (isAudio === true) {
+    if (currentState.isAudio === true) {
 
         alert('click stop audio');
 
-        // stop audio
-        isAudio = false;
-        isAudioEnable = isAudio;
+        turnOnAudio(false);
 
-        $(".remoteVideo").prop('muted', true);
-
-
-        // $(this).html('start audio');
     }
     else {
+        // check config if can turn on video
+        if (canUseAudio() === false) {
+            alert('host not allow you to use audio');
+            return;
+        }
 
-        alert('click  start audio');
-
-        // start micro
-        isAudio = true;
-
-        isAudioEnable = isAudio;
-
-        $(".remoteVideo").prop('muted', false);
-
-        // $(this).html('stop audio');
+        alert('click start audio');
+        turnOnAudio(true);
     }
+
 });
 
 
+// check box
 $('#checkVideo').click(function () {
     setConfig();
 });
@@ -443,9 +513,6 @@ navigator.mediaDevices.getUserMedia({
     });
 
 
-var camVideoTrack;
-var currentTrack;
-var microTrack;
 
 function gotStream(stream) {
     console.log('Adding local stream.');
@@ -454,8 +521,8 @@ function gotStream(stream) {
     isGotMedia = true;
 
     // apply config
-    if (isVideo === false) {
-        localVideo.srcObject = null;
+    if(roomConfig != null){
+        applyConfig(roomConfig);
     }
 
     // get tracks
@@ -471,6 +538,8 @@ function gotStream(stream) {
                 myTimeout();
             }
             else {
+                // already in room and got media
+                // send ready signal to others
                 console.log('is in room, and got stream => READY');
                 socket.emit('got user media', { from: localId });
 
@@ -509,12 +578,10 @@ socket.on('got user media', (data) => {
     // connection.addStream(localStream);
     newPeer.videoSender = connection.addTrack(currentTrack, localStream);
     newPeer.microSender = connection.addTrack(microTrack, localStream);
-    if (isMicro === false) {
-        console.log('is micro: ' + isMicro);
+    if (canUseMicro() === false) {
         newPeer.microSender.replaceTrack(null);
     }
-    if (isVideo === false) {
-        console.log('is video: ' + isVideo);
+    if (canUseVideo() === false) {
         newPeer.videoSender.replaceTrack(null);
     }
 
@@ -554,12 +621,10 @@ socket.on('offer', (data) => {
         // connection.addStream(localStream);
         newPeer.videoSender = connection.addTrack(currentTrack, localStream);
         newPeer.microSender = connection.addTrack(microTrack, localStream);
-        if (isMicro === false) {
-            console.log('is micro: ' + isMicro);
+        if (canUseMicro() === false) {
             newPeer.microSender.replaceTrack(null);
         }
-        if (isVideo === false) {
-            console.log('is video: ' + isVideo);
+        if (canUseVideo() === false) {
             newPeer.videoSender.replaceTrack(null);
         }
 
