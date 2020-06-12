@@ -10,7 +10,7 @@ const historyModel = require('../models/join_history.model');
 
 
 
-router.post('/create', function (req, res) {
+router.post('/create', async function (req, res) {
 
     console.log('post /room/create');
     console.log(req.session.account);
@@ -31,7 +31,7 @@ router.post('/create', function (req, res) {
 
 
     if (roomManager.canCreate(roomName)) {
-        roomManager.create(roomName, host);
+        await roomManager.create(roomName, host);
         // res.redirect('/room?id=' + roomName);
         res.json({
             result: true,
@@ -84,7 +84,7 @@ router.post('/join', function (req, res) {
 
 
 
-router.get('/', function (req, res) {
+router.get('/', async function (req, res) {
 
     console.log('get room: ' + req.query.id);
 
@@ -110,11 +110,14 @@ router.get('/', function (req, res) {
         isHost = true;
     }
     req.session.isHost = isHost;
+    req.session.roomInfo = roomInfo;
     
     // // save history join room
-    // historyModel.saveJoin({
-    //     userId: req.session.account.Email,
-    //     roomId: roomInfo
+    // await historyModel.add({
+    //     UserID: req.session.account.UserID,
+    //     RoomID: req.session.roomInfo.roomId,
+    //     JoinTime: '0',
+    //     LeaveTime: '0'
     // });
     console.log('save join room ok');
     
@@ -127,13 +130,15 @@ router.get('/', function (req, res) {
     });
 });
 
-router.post('/leave', function (req, res) {
+router.post('/leave', async function (req, res) {
     console.log('leave room: ' + req.body.id);
 
     // // save history leave room
-    // historyModel.saveLeave({
-    //     userId: req.session.account.Email,
-    //     roomId: roomInfo
+    //await historyModel.update({
+    //     UserID: req.session.account.UserID,
+    //     RoomID: req.session.roomInfo.roomId,
+    //     JoinTime: '0',
+    //     LeaveTime: '1'
     // });
     console.log('save leave room ok');
 

@@ -1,4 +1,6 @@
 
+const roomModel = require('../models/room.model');
+
 var roomList = [];
 
 module.exports = {
@@ -28,7 +30,13 @@ module.exports = {
     },
 
     create: (roomName, host) => {
+
+        const uuidv4 = require('uuid/v4');
+        const uniqueInsuranceId = uuidv4();
+
+
         roomList.push({
+            roomId: uniqueInsuranceId,
             roomName: roomName,
             host: host,
             messages: [],
@@ -38,6 +46,15 @@ module.exports = {
                 isAudio: true
             }
         });
+
+        //// save room to database
+        // roomModel.add({
+        //     RoomID: uniqueInsuranceId,
+        //     RoomName: roomName,
+        //     HostID: host.UserID,
+        //     StartTime: '0',
+        //     EndTime: '0',
+        // });
 
         
     },

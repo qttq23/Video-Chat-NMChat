@@ -133,7 +133,7 @@ app.use('/room', roomRouter);
 // join/leave history
 const historyModel = require('./models/join_history.model');
 app.get('/history', async function(req, res){
-    const result = await historyModel.all(req.session.account.UserId);
+    // const result = await historyModel.all(req.session.account.UserId);
 
     res.render('history/history', {
         // list: result
