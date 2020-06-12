@@ -160,6 +160,55 @@ socket.on('kicked', function () {
 
 });
 
+$('.video-call').click(function(){
+    // check if host
+    if(isHost === true){
+        console.log('host set main screen');
+
+        let peerId = $(this).attr('title');
+        if (!peerId || peerId == ''){
+            return;
+        }
+
+        // tell everyone set main screen
+        socket.emit('main screen', peerId);
+    }
+});
+
+socket.on('main screen', (peerId)=>{
+
+    forceMainScreen(peerId);
+});
+
+
+function forceMainScreen(peerId){
+
+    console.log('force main screen');
+    // get peerId
+    let peer = findPeerById(peerId);
+    let stream;
+    if (peer != null) {
+        stream = peer.stream;
+    }
+    else if (localId === peerId) {
+        stream = localStream;
+    }
+    else {
+        // maybe not yet connect to peerId
+        // wait some seconds and set main screen again
+        (() => {
+            setTimeout(() => {
+                forceMainScreen(peerId);
+            }, 3000);
+        })();
+        return;
+    }
+
+    // set to main screen
+    let mainVideo = document.querySelector('#remmote-video-large');
+    mainVideo.srcObject = stream;
+    mainVideo.title = peerId;
+}
 
 //////////////////
 
@@ -538,6 +587,7 @@ function gotStream(stream) {
     console.log('Adding local stream.');
     localStream = stream;
     localVideo.srcObject = stream;
+    localVideo.title = localId;
     isGotMedia = true;
 
     // apply config
@@ -754,6 +804,7 @@ function createPeerConnection(toId) {
             var index = findIndexById(toId);
             console.log('found index: ' + index);
             remoteVideos[index].srcObject = event.stream;
+            remoteVideos[index].title = toId;
         };
 
         //https://stackoverflow.com/questions/60636439/webrtc-how-to-detect-when-a-stream-or-track-gets-removed-from-a-peerconnection

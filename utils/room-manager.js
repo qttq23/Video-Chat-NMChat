@@ -1,4 +1,5 @@
 
+
 const roomModel = require('../models/room.model');
 
 var roomList = [];
@@ -31,7 +32,8 @@ module.exports = {
 
     create: (roomName, host) => {
 
-        const uuidv4 = require('uuid/v4');
+        // const uuidv4 = require('uuid/v4');
+        const { v4: uuidv4 } = require('uuid');
         const uniqueInsuranceId = uuidv4();
 
 
@@ -276,6 +278,8 @@ module.exports = {
 
                         // also sent list of configs
                         socket.emit('config', room.config);
+                        // also sent current main screen id
+                        socket.emit('main screen', room.mainScreenId);
                     }
                 }
 
@@ -343,6 +347,21 @@ module.exports = {
 
                 // send to requester
                 socket.emit('participants', listParticipants);
+            });
+
+            socket.on('main screen', (peerId)=>{
+                console.log('host set main screen');
+                
+                // store main screen id
+                let i;
+                for (i = 0; i < roomList.length; i++) {
+                    if (roomList[i].roomName == socket.myRoom) {
+                        roomList[i].mainScreenId = peerId;
+                    }
+                }
+
+                socket.broadcast.in(socket.myRoom).emit('main screen', peerId);
+                socket.emit('main screen', peerId);
             });
 
         });
