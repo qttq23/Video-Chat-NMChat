@@ -139,6 +139,8 @@ $('#btnLeave').click(function () {
 socket.on('room finished', () => {
     // host leave and force others to leave
     // participant just leave
+    console.log('room finished');
+    // alert('room finished');
     window.location.href = '/unknown?state=roomfinished';
 });
 
@@ -514,7 +516,10 @@ socket.on('peer out', (peerId)=>{
 
     // remove ui
     let i = findIndexById(peerId);
-    remoteVideos[i].style.display = "none";
+    try {
+        remoteVideos[i].style.display = "none";
+    }
+    catch (err) {}
 });
 ///////////////
 

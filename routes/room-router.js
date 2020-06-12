@@ -146,6 +146,7 @@ router.post('/leave', function (req, res) {
     }
     req.session.isAlreadyInRoom = false;
     req.session.roomId = null;
+    req.session.isHost = false;
     res.json({ 
         result: true,
         redirect: '/home' 
