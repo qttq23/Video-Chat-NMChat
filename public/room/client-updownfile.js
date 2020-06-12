@@ -24,7 +24,17 @@ $('#formUpload').submit(function () {
                 alert(json.msg);
 
                 // append new message to others
-                let content = `<a href="${json.path}" download>${json.filename}</a>`;
+                let content = `<a href="${json.path}" title="click to download" download>${json.filename}</a>`;
+                    // + `  (<a href="${json.path}" title="click to download" download>download</a>)`;
+                
+                if(isImage(json.filename) === true){
+                    content += `<div>
+                    <a href="${json.path}" title="click to view large image"  target="_blank">
+                    <img src="${json.path}" alt="small image" style="width:200px;height:200px;">
+                    </a>
+                    </div>`;
+                }
+
                 let message = {
                     from: userName,
                     to: 'all',
@@ -50,4 +60,12 @@ $('#formUpload').submit(function () {
 
 
 
+function isImage(filename){
+    let name = filename.toLowerCase();
+    // if (name.match(/.(jpg|jpeg|png|gif|tif|tiff|bmp|)$/i)){
+    if ((/\.(gif|jpg|jpeg|tiff|png|webp|bmp)$/i).test(name)){
+        return true;
+    }
+    return false;
+}
 
