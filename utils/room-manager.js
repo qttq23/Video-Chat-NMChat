@@ -49,9 +49,10 @@ module.exports = {
             }
         });
 
-        //// save room to database
+        // // save room to database
         // roomModel.add({
-        //     RoomID: uniqueInsuranceId,
+        //     // RoomID: uniqueInsuranceId,
+        //     RoomID: roomName,
         //     RoomName: roomName,
         //     HostID: host.UserID,
         //     StartTime: '0',

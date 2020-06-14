@@ -113,12 +113,17 @@ router.get('/', async function (req, res) {
     req.session.roomInfo = roomInfo;
     
     // // save history join room
-    // await historyModel.add({
-    //     UserID: req.session.account.UserID,
-    //     RoomID: req.session.roomInfo.roomId,
-    //     JoinTime: '0',
-    //     LeaveTime: '0'
-    // });
+    // var day = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    // (async () => console.log(
+    //     await historyModel.add(
+    //         req.session.account.UserID, 
+    //         "0ed165cf-ac95-4da4-8a65-54d8ea99719b", 
+    //         day, 
+    //         ''
+    //         )
+    //     )
+    // )();
+
     console.log('save join room ok');
     
     
