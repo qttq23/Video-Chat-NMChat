@@ -6,6 +6,8 @@ var exphbs = require('express-handlebars');
 const http = require('http');
 const socketIO = require('socket.io');
 
+const fileUpload = require('express-fileupload');
+
 // create express app
 const app = express();
 
@@ -15,11 +17,19 @@ server.listen(process.env.PORT || 3000);
 
 // create socket.io server on same port as http
 global.io = socketIO(server);
+global.PUBLIC_PATH = `${__dirname}/public`;
 
 
 // view content of POST message
 app.use(express.urlencoded({
     extended: true
+})
+);
+
+// receive file upload
+app.use(fileUpload({
+    createParentPath: true,
+    // limits: { fileSize: 50 * 1024 * 1024 },
 })
 );
 
@@ -54,7 +64,7 @@ app.use(expSession(
 
 
 // authen: login, register
-const authenRouter = require('./routes/authen');
+const authenRouter = require('./routes/authen-router');
 app.use('/authen', authenRouter);
 
 
@@ -80,145 +90,55 @@ app.use(async function(req, res, next){
 
 // default get
 app.get('/', function(req, res){
-
     res.redirect('/home');
-
 })
 
 // homepage
 app.get('/home', function(req, res){
     // res.sendFile(__dirname + '/index.html');
+
+    let msg = req.session.pendingMsg;
+    req.session.pendingMsg = null;
     res.render('homepage/index', {
         isLogin: req.session.isLogin,
-        account: req.session.account
+        account: req.session.account,
+        msg: msg
     });
+    
 });
 
+app.get('/unknown', function(req, res){
+
+    let state = req.query.state;
+    if(state === 'kicked'){
+        req.session.pendingMsg = 'host kicked you out';
+    }
+    else if(state === 'roomfinished'){
+        req.session.pendingMsg = 'room was finished by host';
+    }
+    res.redirect('/home');
+
+});
 
 // user profile
-const userRouter = require('./routes/user');
+const userRouter = require('./routes/user-router');
 app.use('/user', userRouter);
 
-// room
-const roomManager = require('./utils/room-manager');
-roomManager.startSocketIO();
 
-app.post('/room/create', function(req, res){
-
-    console.log('post /room/create');
-    console.log(req.session.account);
-    console.log(req.body.roomName);
-
-    const roomName = req.body.roomName;
-    const host = req.session.account;
-
-    // check restricts...
-    if (req.session.isAlreadyInRoom === true) {
-        res.json({
-            result: false,
-            msg: 'You are already in one room. leave room to create another room.'
-        });
-        return;
-    }
-    
+// room router
+const roomRouter = require('./routes/room-router');
+app.use('/room', roomRouter);
 
 
-    if(roomManager.canCreate(roomName)){
-        roomManager.create(roomName, host);
-        // res.redirect('/room?id=' + roomName);
-        res.json({
-            result: true,
-            redirect: '/room?id=' + roomName
-        });
-    }
-    else{
-        res.json({
-            result: false,
-            msg: 'cannot create room'
-        });
-    }
-});
+// join/leave history
+const historyModel = require('./models/join_history.model');
+app.get('/history', async function(req, res){
+    const result = await historyModel.all(req.session.account.UserId);
 
-app.post('/room/join', function (req, res) {
-
-    console.log('post /room/join');
-    console.log(req.session.account);
-    console.log(req.body.roomName);
-
-    const roomName = req.body.roomName;
-    const participant = req.session.account;
-
-    // check restricts...
-    if (req.session.isAlreadyInRoom === true) {
-        res.json({
-            result: false,
-            msg: 'You are already in one room. leave room to join another room.'
-        });
-        return;
-    }
-
-
-
-    if (roomManager.canJoin(roomName, participant)) {
-        // roomManager.create(roomName, participant);
-        // res.redirect('/room?id=' + roomName);
-        res.json({
-            result: true,
-            redirect: '/room?id=' + roomName
-        });
-    }
-    else {
-        res.json({
-            result: false,
-            msg: 'cannot join room'
-        });
-    }
-});
-
-
-
-app.get('/room', function(req, res){
-
-    console.log('get room: ' + req.query.id);
-
-    // check restricts...
-    // if(req.session.isAlreadyInRoom === true){
-    //     res.end('You are already in one room. leave room to join another room.');
-    //     return;
-    // }
-    
-    var roomInfo = roomManager.getRoomInfo(req.query.id);
-    console.log(roomInfo);
-    if(!roomInfo){
-        res.end('Room not found');
-        return;
-    }
-    
-    
-    // go to room
-    req.session.isAlreadyInRoom = true;
-    var isHost = false;
-    if(roomInfo.host.Email === req.session.account.Email){
-        isHost = true
-    }
-    
-    // if all ok, send room page
-    res.render('room/meeting_room',{
-        roomInfo: roomInfo,
-        isHost: isHost,
-        userId: req.session.account.Email
+    res.render('history/history', {
+        // list: result
     });
 });
-
-app.post('/room/leave', function(req, res){
-    console.log('leave room: ' + req.body.id);
-
-    req.session.isAlreadyInRoom = false;
-    res.json({result: true});
-})
-
-
-
 
 
 // create http server listen to port

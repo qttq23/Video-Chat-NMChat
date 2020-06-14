@@ -14,9 +14,9 @@ router.get('/profile', function(req, res) {
 
     // simplify url to view self profile
     // user just need to user/profile instead of user/profile?id=<self id>
-    // if(!queryId){
-    //     queryId = req.session.account.UserID;
-    // }
+    if(!queryId){
+        queryId = req.session.account.UserID;
+    }
 
     (async() => {
         const userProfile = await model.get_user_by_id(queryId);

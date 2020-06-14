@@ -31,7 +31,11 @@ module.exports = {
         roomList.push({
             roomName: roomName,
             host: host,
-            messages: []
+            messages: [],
+            config: {
+                isVideo: true,   
+                isMicro: true 
+            }
         });
 
         
@@ -100,7 +104,7 @@ module.exports = {
                 console.log(msg);
             }
 
-            socket.on('create or join', function (room) {
+            socket.on('create or join', function (room, userId) {
                 log('Received request to create or join room ' + room);
 
                 var clientsInRoom = io.sockets.adapter.rooms[room];
@@ -114,6 +118,16 @@ module.exports = {
                     socket.join(room);
                     socket.emit('created', room, socket.id);
                     socket.myRoom = room;
+                    socket.myId = userId;
+
+                    // assign host for later check
+                    let i;
+                    for (i = 0; i < roomList.length; i++) {
+                        if (roomList[i].roomName == socket.myRoom) {
+                            socket.myHost = roomList[i].host;
+                            break;
+                        }
+                    }
 
                 } else if (1 <= numClients <= 3) {
                     log('Client ID ' + socket.id + ' joined room ' + room);
@@ -128,6 +142,7 @@ module.exports = {
                     socket.emit('joined', room);
 
                     socket.myRoom = room;
+                    socket.myId = userId;
                     // socket.broadcast.in(room).emit('joined', room, socket.id);
                     // io.sockets.in(room).emit('ready');
                 } else { // max two clients
@@ -152,11 +167,29 @@ module.exports = {
             socket.on('disconnect', function () {
                 console.log('a client disconnected');
                 
+                
+
+                // check if just left is host
+                let i;
+                for (i = 0; i < roomList.length; i++) {
+                    if (roomList[i].roomName == socket.myRoom 
+                        && roomList[i].host == socket.myHost) {
+
+                        console.log('is host leave');
+                        // host here
+                        // force others to leave
+                        socket.broadcast.in(socket.myRoom).emit('room finished');
+                        break;
+                    }
+                }
+
                 socket.leave(socket.myRoom);
                 socket.myRoom = null;
-
+                socket.myHost = null;
                 
+
             });
+
 
             socket.on('msg', (message) => {
                 console.log('client sent msg');
@@ -196,8 +229,76 @@ module.exports = {
                         for(k = 0; k < room.messages.length; k++){
                             socket.emit('msg', room.messages[k]);
                         }
+
+                        // also sent list of configs
+                        socket.emit('config', room.config);
                     }
                 }
+
+                
+
+            });
+
+            socket.on('kick', (userId)=>{
+
+                // loop all client
+                let room = io.sockets.adapter.rooms[socket.myRoom];
+                let clients = room.sockets;
+
+                console.log(room);
+
+                for (var clientId in clients) {
+
+                    //this is the socket of each client in the room.
+                    var clientSocket = io.sockets.connected[clientId];
+
+                    if (clientSocket.myId === userId){
+
+                        console.log('found userId to kick');
+
+                        // if match
+                        // emit kick signal
+                        clientSocket.emit('kicked');
+                        break;
+                    }
+
+
+                }
+            });
+
+            socket.on('set config', (config) => {
+                console.log('host set config');
+                console.log(config);
+
+                // store to config in room
+                let i;
+                for (i = 0; i < roomList.length; i++) {
+                    if (roomList[i].roomName == socket.myRoom) {
+                        roomList[i].config = config;
+                    }
+                }
+
+                // broadcast to all in room
+                socket.broadcast.in(socket.myRoom).emit('config', config);
+            });
+
+            socket.on('participants', ()=>{
+                // loop all client
+                let room = io.sockets.adapter.rooms[socket.myRoom];
+                let clients = room.sockets;
+
+
+                let listParticipants = [];
+                for (var clientId in clients) {
+
+                    //this is the socket of each client in the room.
+                    var clientSocket = io.sockets.connected[clientId];
+
+                    listParticipants.push(clientSocket.myId);
+                }
+
+                // send to requester
+                socket.emit('participants', listParticipants);
             });
 
         });

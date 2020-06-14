@@ -52,9 +52,9 @@
                 <div class="dropdown-menu" aria-labelledby="triggerId">
 
                     {{#if isLogin}}
-                    <button class="dropdown-item" href="#">
+                    <a class="dropdown-item" href="/user/profile">
                         <i class="fa fa-info" aria-hidden="true"> Profile</i>
-                    </button>
+                    </a>
                     <button class="dropdown-item" href="#">
                         <i class="fa fa-sign-out" aria-hidden="true"> Sign out</i>
                     </button> {{else}}
@@ -232,6 +232,9 @@
 
 
 
+    <script>
+        var remoteMessage = '{{this.msg}}';
+    </script>
 
 
 

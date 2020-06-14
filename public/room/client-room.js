@@ -9,14 +9,34 @@ var remoteStream;
 var turnReady;
 
 var pcConfig = {
-    'iceServers': [{
-        'urls': 'stun:stun.l.google.com:19302'
-    },
-    {
-        'urls': 'turn:numb.viagenie.ca',
-        'credential': 'bthang',
-        'username': '1753102@student.hcmus.edu.vn'
-    }
+    'iceServers': [
+        {
+            'urls': 'stun:stun.l.google.com:19302'
+        },
+        // {
+        //     'urls': 'stun:stun2.l.google.com:19305'
+        // },
+
+
+
+        // {
+        //     'urls': 'turn:numb.viagenie.ca',
+        //     'credential': 'muazkh',
+        //     'username': 'webrtc@live.com'
+        // },
+        // {
+        //     url: 'turn:numb.viagenie.ca',
+        //     credential: 'muazkh',
+        //     username: 'webrtc@live.com'
+        // },
+
+        {
+            'urls': 'turn:numb.viagenie.ca',
+            'credential': 'irous',
+            'username': 'buithang1999a@gmail.com'
+        },
+
+   
     ]
 };
 
@@ -33,6 +53,10 @@ var peers = [];
 var isInRoom = false;
 var isGotMedia = false;
 
+var isMicro = false;
+var isVideo = true;
+var isAudio = true;
+var localConfig = null;
 /////////////////////////////////////////////
 
 var room = roomName;
@@ -46,37 +70,106 @@ socket.on('connect', () => {
         localId = returnedId;
     });
 
-    
+
 });
 
 /////////////////////
 
 $(window).on("beforeunload", function () {
+
+
+    // tell http server that user leave room
     $.ajax({
         method: 'post',
         url: '/room/leave',
         data: {
             id: room
         }
-        
+
 
     }).done(function (json) {
         console.log(json);
     });
 
+    // another signal will be automatically sent to SocketIO when client disconnected
+});
+
+
+
+// leave room
+$('#btnLeave').click(function () {
+
+    // alert ok & cancel
+    let prompt = 'Do you want to leave this room?';
+    if (isHost) {
+        prompt = 'Do you want to finish this room?';
+    }
+    let isOk = confirm(prompt);
+
+    // if ok -> leave
+    if (isOk === true) {
+
+
+        // just navigate to home
+        // unload event will be triggered
+        // leave room implemented in that
+        window.location.href = '/home';
+
+    }
+});
+
+
+socket.on('room finished', () => {
+    // host leave and force others to leave
+    // participant just leave
+    window.location.href = '/unknown?state=roomfinished';
+});
+
+socket.on('config', function (config) {
+
+    console.log(config);
+    localConfig = config;
+
+    // apply configs
+    if (config.isVideo === false) {
+
+        isVideo = true;
+        $('#btnVideo').trigger('click');
+    }
+    if (config.isMicro === false) {
+
+        isMicro = true;
+        $('#btnMicro').trigger('click');
+
+    }
 })
+
+//////////////////
+
+// kick participant
+$('#btnKick').click(function () {
+
+    let userId = $('#edtKick').val();
+    socket.emit('kick', userId);
+});
+
+socket.on('kicked', function () {
+
+    window.location.href = '/unknown?state=kicked';
+
+});
 
 
 //////////////////
 
 
 if (room !== '') {
-    if(isHost === true){
+    if (isHost === true) {
     }
-    else{
+    else {
 
     }
-    socket.emit('create or join', room);
+    socket.emit('create or join', room, userName);
     console.log('Attempted to create or  join room', room);
 }
 
@@ -84,6 +177,9 @@ socket.on('created', function (room) {
     console.log('Created room ' + room);
     // isInitiator = true;
     isInRoom = true;
+
+    // request messages in room
+    socket.emit('get messages');
 });
 
 
@@ -107,18 +203,15 @@ console.log(remoteVideos);
 
 
 // micro button
-var count = 0;
-var isMicro = false;
-$('#btnMicro').click(function(){
+$('#btnMicro').click(function () {
 
-    count+=1;
-    // if(count % 2 == 1){
-    if(isMicro == true){
+    if (isMicro == true) {
 
-        alert('click stop');
+        alert('click stop micro');
 
         // stop micro
         isMicro = false;
+        isMicroEnable = isMicro;
 
         let i;
         for (i = 0; i < peers.length; i++) {
@@ -127,16 +220,21 @@ $('#btnMicro').click(function(){
             peer.microSender.replaceTrack(null);
         }
 
-
-        
-        $(this).html('enable micro');
+        // $(this).html('enable micro');
     }
-    else{
+    else {
+        // check config if can turn on micro
+        if (localConfig.isMicro === false) {
+            alert('host not allow you to use micro');
+            return;
+        }
 
-        alert('click  start');
+
+        alert('click start micro');
 
         // start micro
         isMicro = true;
+        isMicroEnable = isMicro;
         let i;
         for (i = 0; i < peers.length; i++) {
             var peer = peers[i];
@@ -144,25 +242,26 @@ $('#btnMicro').click(function(){
             peer.microSender.replaceTrack(microTrack);
         }
 
-        $(this).html('stop micro');
+        // $(this).html('stop micro');
     }
-
-    
 });
 
 // video button
-var countClickVideo = 0;
-var isVideo = true;
 $('#btnVideo').click(function () {
 
-    countClickVideo += 1;
-    if (countClickVideo % 2 == 1) {
+    if (isVideo === true) {
 
         alert('click stop video');
 
-        // stop micro
+        // stop video
         isVideo = false;
+        isCallEnable = isVideo;
+        camVideoTrack.enabled = false;
 
+        // not show local
+        localVideo.srcObject = null;
+
+        // not send to remotes
         let i;
         for (i = 0; i < peers.length; i++) {
             var peer = peers[i];
@@ -171,14 +270,27 @@ $('#btnVideo').click(function () {
         }
 
 
-        $(this).html('start video');
+
+        // $(this).html('start video');
     }
     else {
+        // check config if can turn on video
+        if (localConfig.isVideo === false) {
+            alert('host not allow you to use video');
+            return;
+        }
 
-        alert('click  start video');
+        alert('click start video');
 
-        // start micro
+        // start video
         isVideo = true;
+        isCallEnable = isVideo;
+        camVideoTrack.enabled = true;
+
+        // show local
+        localVideo.srcObject = localStream;
+
+        // send to remotes
         let i;
         for (i = 0; i < peers.length; i++) {
             var peer = peers[i];
@@ -186,7 +298,7 @@ $('#btnVideo').click(function () {
             peer.videoSender.replaceTrack(camVideoTrack);
         }
 
-        $(this).html('stop video');
+        // $(this).html('stop video');
     }
 
 
@@ -194,42 +306,64 @@ $('#btnVideo').click(function () {
 
 
 // audio button
-var countClickAudio = 0;
-var isAudio = true;
 $('#btnAudio').click(function () {
 
-    countClickAudio += 1;
-    if (countClickAudio % 2 == 1) {
+    if (isAudio === true) {
 
         alert('click stop audio');
 
         // stop audio
         isAudio = false;
+        isAudioEnable = isAudio;
 
         $(".remoteVideo").prop('muted', true);
 
 
-        $(this).html('start audio');
+        // $(this).html('start audio');
     }
     else {
 
         alert('click  start audio');
 
         // start micro
-        isAudio = true; 
+        isAudio = true;
+
+        isAudioEnable = isAudio;
+
         $(".remoteVideo").prop('muted', false);
 
-        $(this).html('stop audio');
+        // $(this).html('stop audio');
     }
 });
 
 
+$('#checkVideo').click(function () {
+    setConfig();
+});
+
+$('#checkMicro').click(function () {
+    setConfig();
+});
+
+function setConfig() {
+
+    let config = { isVideo: false, isMicro: false };
+    config.isVideo = $("#checkVideo").is(':checked');
+    config.isMicro = $("#checkMicro").is(':checked');
+
+    console.log(config);
+    // send to remote
+    socket.emit('set config', config);
+
+}
+
 // send messages
-$(btnSend).click(function(){
+$(btnSend).click(function () {
 
     // get content in edit box
     let content = $(input_message).val();
-    // alert(content);
+    console.log(content);
+
 
     // send to socketio server
     let message = {
@@ -245,12 +379,57 @@ $(btnSend).click(function(){
     $(input_message).val('');
 });
 
-socket.on('msg', (message)=>{
+socket.on('msg', (message) => {
     console.log('msg received');
     $(txtMessages).append('<br>' + message.from + ': ' + message.content);
 
 });
 
+
+/// get list participants
+$(btnParticipants).click(function () {
+
+    // request list of participants
+    socket.emit('participants');
+});
+
+socket.on('participants', (participants) => {
+
+    // clear old data
+    let divParticipants = $('#divParticipants');
+    divParticipants.html('');
+
+    // append new data
+    let i;
+    for (i = 0; i < participants.length; i++) {
+
+        let name = participants[i];
+        if (name === userName){
+            name += ' <b>(You)</b>';
+        }
+
+        let html = `
+            <div class="participant-cell">
+                <span>${name}</span>
+                <div class="cell-options">
+                    <a name="" id="mute-participant" class="btn btn-danger diagonal-line" href="#"
+                        role="button">
+                        <i class="fa fa-volume-up" aria-hidden="true"></i>
+                    </a>
+                    <a name="" id="disable-camera-participant" class="btn btn-danger diagonal-line" href="#"
+                        role="button">
+                        <i class="fa fa-video-camera" aria-hidden="true"></i>
+                    </a>
+                </div>
+                <br>
+                <br>
+                <hr>
+            </div>
+            `;
+        
+        divParticipants.append(html);
+    }
+});
 
 ///////////////
 
@@ -274,6 +453,12 @@ function gotStream(stream) {
     localVideo.srcObject = stream;
     isGotMedia = true;
 
+    // apply config
+    if (isVideo === false) {
+        localVideo.srcObject = null;
+    }
+
+    // get tracks
     camVideoTrack = localStream.getVideoTracks()[0];
     currentTrack = localStream.getVideoTracks()[0];
     microTrack = localStream.getAudioTracks()[0];
@@ -324,7 +509,7 @@ socket.on('got user media', (data) => {
     // connection.addStream(localStream);
     newPeer.videoSender = connection.addTrack(currentTrack, localStream);
     newPeer.microSender = connection.addTrack(microTrack, localStream);
-    if(isMicro === false){
+    if (isMicro === false) {
         console.log('is micro: ' + isMicro);
         newPeer.microSender.replaceTrack(null);
     }
@@ -434,7 +619,7 @@ socket.on('candidate', (data) => {
 });
 
 
-socket.on('disconnect', ()=>{
+socket.on('disconnect', () => {
     socket.emit('bye');
 })
 
@@ -488,6 +673,36 @@ function createPeerConnection(toId) {
             var index = findIndexById(toId);
             console.log('found index: ' + index);
             remoteVideos[index].srcObject = event.stream;
+        };
+
+        //https://stackoverflow.com/questions/60636439/webrtc-how-to-detect-when-a-stream-or-track-gets-removed-from-a-peerconnection
+        connection.ontrack = ({ track, streams: [stream] }) => {
+            track.onunmute = () => {
+                // if (!video.srcObject) video.srcObject = stream;
+                console.log('on ummute');
+
+                // if (track.kind === 'video') {
+                //     // replace video by stream
+                //     var index = findIndexById(toId);
+                //     remoteVideos[index].srcObject = stream;
+                // }
+
+            };
+            stream.onremovetrack = ({ track }) => {
+
+                console.log('on removetrack');
+            };
+            track.onmute = () => {
+                console.log('on mute');
+                console.log(track);
+
+
+                // if (track.kind === 'video') {
+                //     // replace video by image
+                //     var index = findIndexById(toId);
+                //     remoteVideos[index].srcObject = null;
+                // }
+            };
         };
 
 

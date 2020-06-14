@@ -11,8 +11,10 @@ var video_button = document.getElementById("video-button");
 
 var btnSend = document.getElementById("btnSend");
 var txtMessages = document.getElementById("txtMessages");
+var btnLeave = document.getElementById('btnLeave');
+var btnParticipants = document.getElementById('btnParticipants');
 
-let isMicroEnable = true;
+let isMicroEnable = false;
 let isAudioEnable = true;
 let isCallEnable = true;
 
@@ -42,4 +44,27 @@ $('#btnVideo').click(function() {
         $('#btnVideo').removeClass('diagonal-line');
     }
     isCallEnable = !isCallEnable;
+});
+
+$(()=>{
+    // apply video, micro, audio config
+    if (isMicroEnable) {
+        $('#btnMicro').removeClass('diagonal-line');
+    } else {
+        $('#btnMicro').addClass('diagonal-line');
+    }
+
+    if (isAudioEnable) {
+        $('#btnAudio').removeClass('diagonal-line');
+    } else {
+        $('#btnAudio').addClass('diagonal-line');
+    }
+
+    if (isCallEnable) {
+        $('#btnVideo').removeClass('diagonal-line');
+    } else {
+        $('#btnVideo').addClass('diagonal-line');
+    }
+
+
 });

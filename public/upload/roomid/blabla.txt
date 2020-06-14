@@ -1,0 +1,100 @@
+thanh: 
+nhớ làm trên nhánh riêng đặt tên khác, t thấy m commit lên nhánh draft-user-profile
+
+user.model chưa có hàm update?
+
+t chưa thấy các lớp yêu cầu viết?
+
+trung:
+homepage:
+ button create, join: ok
+
+ account info hiện to bị dính với 'your upcomming event' (hình chụp)
+
+ thật ra ý t là cái góc chỗ có hình user kìa là để thông tin khi đã đăng nhập: hình avatar + tên. bấm nút mở rộng thì có option 'profile' để tới trang profile
+ 
+ 
+room screen: bố cục ok
+
+ bị quá to k vừa màn hình (đính kèm ảnh)
+ screen để padding một chút
+ 
+nút gọi màu đỏ chuyển thành nút loa đi (nghe từ các người khác), ta có 3 chức năng chính: nghe audio từ người khác, bật micro để nói cho người khác, bật video để show video
+ các nút bấm vào thì có dấu gạch hay j đó để thể hiện đã tắt, bấm lần nữa thì hiện lại
+ các nút nên để phía góc dưới trái vì để giữa tưởng là của màn hình to
+
+
+
+ các video nhỏ: cái đầu tên là của local nên để id là localVideo...
+                các cái tiếp theo là của remote nên để class là remoteVideo..
+
+ các video nhỏ khi gắn video vào thì bị tăng chiều cao (hình chụp), có cách nào cố định chiều cao k?
+
+
+profile:
+dialog edit chỉ cho sửa name, phone, birthdate và có link tới trang thay mk
+
+viết script: 1 hàm nhận các tham số về thông tin user, t sẽ gọi hàm này để cập nhật ui nếu edit thành công.
+
+trang profile nên để thanh navbar. các ô edit text trong edit dialog nên để cạnh bo tròn
+
+
+góp ý chung về giao diện:
+giao diện k cần đẹp nhưng phải đồng bộ và ít màu
+vd: ở login màu tím, hompage vàng xanh, profile xanh lá cây, xanh nhạt thì có vẻ hơi nhiều màu.
+
+và giữa các trang phải thể hiện được là của cùng 1 ứng dụng web (thường thì dùng navbar , vd: ở login nên có thanh navbar để hiện tên nmchat)
+
+
+
+#công việc tuần tới: 6/6 -> 10/6
+sửa và hoàn tất việc cũ
+
+ng tham gia:
+- gui file/tai file
+- roi phong
+
+chu phong:
+- quan li camera/audio
+- ket thuc phong
+- duoi nguoi tham gia
+
+ng dung:
+- quan li lich su
+
+ui:
+nút gửi file (hiện dialog chọn file để gửi)
+nút rời phòng
+
+nút xem danh sách các ng tham gia (bấm vào hiện dialog danh sách và các nút quản lí củachủ phòng: mute all, turn off video all, kick)
+nút kết thúc phòng (nếu là chủ thì hiện kt phong, nếu ko thì hiện leave room)
+
+trang history gồm nhiều dòng thể hiện các lịch sử vào phòng
+navbar có nút history bấm vào qua trang history
+
+
+data:
+hàm thêm lịch sử, truy vấn lịch sử của user
+
+#công việc tuần tới: 11/6 -> 14/6
+ng dung:
+đăng ký
+thêm friend
+
+chu phong:
+mời người dùng
+
+tinh chỉnh lại code
+
+15/6 - 18/6
+làm chức năng thêm nếu có
+tính chỉnh code, document
+
+-> nộp bài
+
+19-21/6
+làm chức năng thêm nếu có
+
+22/6 vấn đáp
+
+
