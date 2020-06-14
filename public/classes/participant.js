@@ -30,16 +30,52 @@ class RoomParticipants {
     }
 }
 
+
+module.exports =
 class Pariticipant {
-    constructor(userId) {
-        this.userId = userId;
-        this.joinTime = Date.now();
 
+
+    ID = '';
+    Name = '';
+    RoomName = '';
+
+
+    constructor(user) {
+        this.ID = user.UserID;
+        this.Name = user.Name;
+    }
+
+    viewHearOthers(){
+        // connect to room and others
+    }
+
+    toggleMicro(isOn){
 
     }
 
-    leave() {
-        this.leaveTime = Date.now();
+    toggleCamere(isOn){
 
     }
+
+    toggleAudio(isOn){
+
+    }
+
+    shareScreen(isOn){
+
+    }
+
+    sendMessage(msg){
+
+    }
+
+    sendAttachment(file){
+
+    }
+
+    leaveRoom(){
+
+    }
+
+
 }

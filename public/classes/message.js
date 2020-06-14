@@ -9,18 +9,23 @@ class MessageClient {
     }
 }
 
-class Message {
-    static sendMessage(content, receiver) {
-        if (content && receiver) {
-            const sentTime = Date.now();
+module.exports =
+    class Message {
 
-            //Convert content, receiver, sent time to bytes
+
+        SenderId = '';
+        ReceiverId = '';
+        Content = '';
+        SendTime = '';
+        State = '';
+
+        constructor(message) {
+            this.SenderId = message.SenderId;
+            this.ReceiverId = message.ReceiverId;
+            this.Content = message.Content;
+            this.SendTime = message.SendTime;
+            this.State = message.State;
         }
-    }
 
-    static receiveMessage() {
-        //Convert bytes to receiver, sent time to info
 
-        //get info
     }
-}
