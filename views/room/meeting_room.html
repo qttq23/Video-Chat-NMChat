@@ -46,12 +46,21 @@
         </div>
 
 
-        <div class="w-25 " style="background-color: white; border-style:outset; border-color: grey; ">
-            <button data-toggle="modal" data-target="#modalParticipants" type="button" name="" id="btnParticipants" class="btn btn-primary participants " btn-lg btn-block>
-                <i class="fa fa-eye" style="font-size: larger; color: white" aria-hidden="true">
-                    Participants
-                </i>
-            </button>
+        <div class="w-25" style="background-color: white; border-style:outset; border-color: grey; ">
+            <div class="d-flex">
+                <button data-toggle="modal" data-target="#modalParticipants" type="button" name="" id="btnParticipants" class="btn btn-primary participants " btn-lg btn-block>
+                    <i class="fa fa-eye" style="font-size: larger; color: white" aria-hidden="true">
+                        Participants
+                    </i>
+                </button>
+                <form action="" method="post" class="form-inline add-friend">
+                    <input type="text" class="form-control" placeholder="ID" id="id">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="button">Mời</button>
+                    </div>
+                </form>
+            </div>
+
             <hr>
             <div id="txtMessages" style="overflow:scroll ; height:80%; margin-left: 10px ">
                 {{#each messages}}
