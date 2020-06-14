@@ -622,6 +622,81 @@ function gotStream(stream) {
 
 }
 
+////////////////////////////////////
+/////////////
+
+function getScreen(sourceId) {
+    var constraints = {
+        mandatory: {
+            chromeMediaSource: 'desktop',
+            maxWidth: screen.width > 1920 ? screen.width : 1920,
+            maxHeight: screen.height > 1080 ? screen.height : 1080,
+            chromeMediaSourceId: sourceId
+        },
+        optional: [
+            { googTemporalLayeredScreencast: true }
+        ]
+    };
+    navigator.getUserMedia({ video: constraints },
+        stream => {
+
+            // add new stream to local
+            console.log('changed local stream to screen. num connections: ' + peers.length);
+            // localStream = stream;
+            localVideo.srcObject = stream;
+            currentTrack = stream.getVideoTracks()[0];
+
+            // re-add stream track to all remotes
+            var i;
+            for (i = 0; i < peers.length; i++) {
+                var peer = peers[i];
+                var connection = peers[i].connection;
+
+                peer.videoSender.replaceTrack(currentTrack);
+            }
+
+
+            // when stop share
+            stream.getVideoTracks()[0].onended = function () {
+                // doWhatYouNeedToDo();
+                // switch
+                localVideo.srcObject = localStream;
+                currentTrack = localStream.getVideoTracks()[0];;
+
+
+                // re-add stream track to all remotes
+                var i;
+                for (i = 0; i < peers.length; i++) {
+                    var peer = peers[i];
+                    var connection = peers[i].connection;
+                    peer.videoSender.replaceTrack(currentTrack);
+                }
+            };
+
+        },
+        error => {
+            console.log(error);
+        }
+    );
+}
+
+window.addEventListener("message", function (msg) {
+    if (!msg.data) {
+        return;
+    } else if (msg.data.sourceId) {
+        getScreen(msg.data.sourceId);
+    } else if (msg.data.addonInstalled) {
+        $('#addon-not-found').hide();
+        $('#share-my-screen').removeAttr('disabled');
+    }
+}, false);
+
+
+var btnShareScreen = document.querySelector('#btnShareScreen');
+btnShareScreen.onclick = function () {
+    window.postMessage('requestScreenSourceId', '*');
+};
+///////////////
 
 
 ///////////////////////////////////////////////////////
