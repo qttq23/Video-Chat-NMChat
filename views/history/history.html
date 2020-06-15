@@ -73,13 +73,14 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>Start Time</th>
-                    <th>End Time</th>
+                    <th>Join Time</th>
+                    <th>Leave Time</th>
                     <th>Room</th>
-                    <th>Host Name</th>
+                    <th>Host</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="txtHistories">
+                <tr><td>loading...</td></tr>
                 {{#each histories}}
                 <tr>
                     <td>{{StartTime}}</td>
@@ -106,7 +107,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js " integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI " crossorigin="anonymous "></script>
 
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-    <script src="/js-client-server/xhomepage.js "></script>
+    <script src="/js-client-server/xhistory.js"></script>
 </body>
 
 </html>

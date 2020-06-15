@@ -82,6 +82,9 @@ app.use(async function(req, res, next){
     else{
         console.log('already login');
         console.log(req.session.account);
+
+        res.locals.isLogin = req.session.isLogin;
+        res.locals.account = req.session.account;
         next();
     }
 
@@ -131,7 +134,9 @@ app.use('/room', roomRouter);
 
 
 // join/leave history
+const db = require('./utils/database.util');
 const historyModel = require('./models/join_history.model');
+const roomModel = require('./models/room.model');
 app.get('/history', async function(req, res){
     // const result = await historyModel.all(req.session.account.UserId);
 
@@ -140,6 +145,42 @@ app.get('/history', async function(req, res){
     });
 });
 
+app.get('/history/all', async function(req, res){
+
+    console.log('get /history/all');
+
+    let result = await historyModel.get_user_by_id(req.session.account.UserID);
+    console.log(result);
+
+    let histories = [];
+    // histories = result;
+
+    for(i = 0; i < result.length; i++){
+        // let room = await roomModel.get_room_by_id(result[i].RoomID);
+        let room = await db.query(`select * from rooms where RoomID="${result[i].RoomID}"`);
+        console.log(room);
+        room = room[0];
+
+        let host = await userModel.get_user_by_id(room.HostID);
+        // let host = await db.query(room.HostID);
+        console.log(host);
+        host = host[0];
+
+        let history = {
+            joinTime: result[i].JoinTime,
+            leaveTime: result[i].LeaveTime,
+            roomName: room.RoomName,
+            hostName: host.Email
+        };
+        console.log(history);
+        histories.push(history);
+    }
+
+    res.json({
+        histories: histories
+    });
+
+});
 
 app.get('/friend', async function (req, res) {
     // const result = await historyModel.all(req.session.account.UserId);

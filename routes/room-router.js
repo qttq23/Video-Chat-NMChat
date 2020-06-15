@@ -112,18 +112,15 @@ router.get('/', async function (req, res) {
     req.session.isHost = isHost;
     req.session.roomInfo = roomInfo;
     
-    // // save history join room
-    // var day = new Date().toISOString().slice(0, 19).replace('T', ' ');
-    // (async () => console.log(
-    //     await historyModel.add(
-    //         req.session.account.UserID, 
-    //         "0ed165cf-ac95-4da4-8a65-54d8ea99719b", 
-    //         day, 
-    //         ''
-    //         )
-    //     )
-    // )();
-
+    // save history join room
+    var day = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const result2 = await historyModel.add(
+        req.session.account.UserID,
+        roomInfo.roomId,
+        day,
+        ''
+    );
+    console.log(result2);
     console.log('save join room ok');
     
     
@@ -138,13 +135,15 @@ router.get('/', async function (req, res) {
 router.post('/leave', async function (req, res) {
     console.log('leave room: ' + req.body.id);
 
-    // // save history leave room
-    //await historyModel.update({
-    //     UserID: req.session.account.UserID,
-    //     RoomID: req.session.roomInfo.roomId,
-    //     JoinTime: '0',
-    //     LeaveTime: '1'
-    // });
+    // save history leave room
+    var day = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const result2 = await historyModel.update(
+        req.session.account.UserID,
+        req.session.roomInfo.roomId,
+        '',
+        day
+    );
+    console.log(result2);
     console.log('save leave room ok');
 
 

@@ -30,7 +30,7 @@ module.exports = {
         return false;
     },
 
-    create: (roomName, host) => {
+    create: async (roomName, host) => {
 
         // const uuidv4 = require('uuid/v4');
         const { v4: uuidv4 } = require('uuid');
@@ -49,15 +49,17 @@ module.exports = {
             }
         });
 
-        // // save room to database
-        // roomModel.add({
-        //     // RoomID: uniqueInsuranceId,
-        //     RoomID: roomName,
-        //     RoomName: roomName,
-        //     HostID: host.UserID,
-        //     StartTime: '0',
-        //     EndTime: '0',
-        // });
+        // save room to database
+        var day = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        const result = await roomModel.add(
+            uniqueInsuranceId,
+            // roomName,
+            roomName,
+            host.UserID,
+            day,
+            '',
+        );
+        console.log(result);
 
         
     },
@@ -224,6 +226,9 @@ module.exports = {
 
                         // remove room info
                         roomList.pop(roomList[i]);
+
+                        // update time leave on database
+                        // roomModel.update(roomList[i].roomId, leavetime);
 
                         break;
                     }
