@@ -70,24 +70,24 @@
         <h4 class="title-history">Add Friend</h4>
         <br>
         <form action="" method="post" class="form-inline table">
-            <input type="text" class="form-control" placeholder="Friend ID or Email" id="message">
+            <input type="text" class="form-control" placeholder="Friend ID or Email" id="txtFriendEmail">
             <div class="input-group-append">
-                <button class="btn btn-primary" type="submit">Add</button>
+                <button class="btn btn-primary" type="submit" id="btnAddFriend">Add</button>
             </div>
         </form>
         <br>
         <table class="table">
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>Email</th>
                     <th>Name</th>
 
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="txtFriends">
                 {{#each friends}}
                 <tr>
-                    <td>{{id}}</td>
+                    <td>{{Email}}</td>
                     <td>{{Name}}</td>
                 </tr>
                 {{/each}}
@@ -109,7 +109,8 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js " integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI " crossorigin="anonymous "></script>
 
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-    <script src="/js-client-server/xhomepage.js "></script>
+    <script src="/js-client-server/xadd_friend.js "></script>
+
 </body>
 
 </html>

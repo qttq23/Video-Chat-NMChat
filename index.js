@@ -148,3 +148,69 @@ app.get('/friend', async function (req, res) {
         // list: result
     });
 });
+
+const friendModel = require('./models/user_friend.model');
+const userModel = require('./models/user.model');
+app.post('/friend/add', async function(req, res){
+
+    console.log('post /friend/add');
+    console.log(req.body);
+    const userId = req.session.account.UserID;
+    const friendEmail = req.body.friendEmail;
+
+    // check if friend exists
+    let friend = await require('./models/user.model').get_user_by_email(friendEmail);
+    friend = friend[0];
+    console.log(friend);
+    if(!friend || friend.UserID === userId){
+        res.json({
+            result: false,
+            msg: 'friend not exists'
+        });
+    }
+
+    // save database
+    const result = await friendModel.add(userId, friend.UserID);
+    console.log(result);
+    if(result.affectedRows == 1){
+
+        res.json({
+            result: true,
+            msg: 'add ok'
+        });
+    }
+    else{
+        res.json({
+            result: false,
+            msg: 'add friend failed'
+        });
+    }
+
+
+});
+
+app.get('/friend/all', async function(req, res){
+
+    console.log('get /friend/all');
+    
+    let userId = req.session.account.UserID;
+    let result = await friendModel.get_friend_by_id(userId);
+    console.log(result);
+    
+    let friends = result[0];
+    let friendsToSend = [];
+    for(i = 0; i < friends.length; i++){
+        let friend = await userModel.get_user_by_id(friends[i].userId);
+        friend = {
+            id: friend[0].UserID,
+            email: friend[0].Email,
+            name: friend[0].Name
+        }
+        friendsToSend.push(friend);
+    }
+    console.log(friendsToSend);
+
+    res.json({
+        friends: friendsToSend
+    });
+});
