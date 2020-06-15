@@ -483,7 +483,7 @@ function setConfig() {
 }
 
 // send messages
-$(btnSend).click(function () {
+$("#formSendMessage").submit(function (e) {
 
     // get content in edit box
     let content = $(input_message).val();
@@ -502,6 +502,8 @@ $(btnSend).click(function () {
     // update local messages
     $(txtMessages).append('<br>' + 'you: ' + content);
     $(input_message).val('');
+
+    return false;
 });
 
 socket.on('msg', (message) => {

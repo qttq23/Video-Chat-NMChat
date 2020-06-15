@@ -141,8 +141,10 @@ app.get('/history', async function(req, res){
 });
 
 
-// create http server listen to port
-// const port = process.env.PORT || 3000;
-// app.listen(port, function () {
-//     console.log(`Server is running on: localhost:${port}`);
-// });
+app.get('/friend', async function (req, res) {
+    // const result = await historyModel.all(req.session.account.UserId);
+
+    res.render('add_friend/add_friend', {
+        // list: result
+    });
+});

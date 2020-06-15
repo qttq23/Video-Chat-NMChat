@@ -61,25 +61,30 @@ router.post('/login', async function(req, res) {
 router.get('/signup',async function(req, res){
 
     console.log('get /signup');
-    console.log(req.query.e);
-    console.log(req.query.p);
+    // console.log(req.query.e);
+    // console.log(req.query.p);
 
-    const { v4: uuidv4 } = require('uuid');
-    const uniqueInsuranceId = uuidv4();
+    // const { v4: uuidv4 } = require('uuid');
+    // const uniqueInsuranceId = uuidv4();
 
-    const result = await userModel.add({
-        UserID: uniqueInsuranceId,
-        Name: req.query.e,
-        Email: req.query.e,
-        Password: req.query.p,
-        AvatarUrl: '',
-        BirthDate: '',
-        PhoneNumber: '',
+    // const result = await userModel.add({
+    //     UserID: uniqueInsuranceId,
+    //     Name: req.query.e,
+    //     Email: req.query.e,
+    //     Password: req.query.p,
+    //     AvatarUrl: '',
+    //     BirthDate: '',
+    //     PhoneNumber: '',
+    // });
+    // result.catch((e)=>{
+    //     console.log(e);
+    // });
+
+    // console.log(result);
+    // res.send(result);
+
+    res.render('signup/signup', {
+        
     });
-    result.catch((e)=>{
-        console.log(e);
-    });
 
-    console.log(result);
-    res.send(result);
 });

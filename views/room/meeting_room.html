@@ -70,12 +70,12 @@
                 <p>{{message}}</p> {{/each}} </div>
             <div style="background-color:white ">
                 <div class="input-group">
-                    <form action="" method="post" class="form-inline">
+                    <form id="formSendMessage" action="" method="post" class="form-inline">
                         <input type="text" class="form-control" placeholder="Tin nhắn" id="message">
                         <div class="input-group-append">
                             <button class="btn btn-primary" type="submit">Gửi</button>
                         </div>
-                    </form>
+                    </form i>
                     <br>
                     <br><br>
                     <form ref="formUpload" id="formUpload" method="post" class="form-inline" action="/room/upload" encType="multipart/form-data">
@@ -133,7 +133,7 @@
                                     {{#if isCanAudio}}
                                     <a name="" id="mute-participant" class="btn btn-primary" href="#" role="button">
                                         <i class="fa fa-volume-up" aria-hidden="true"></i>
-                                    </a>{{/else}}
+                                    </a>{{else}}
                                     <a name="" id="mute-participant" class="btn btn-danger diagonal-line" href="#" role="button">
                                         <i class="fa fa-volume-up" aria-hidden="true"></i>
                                     </a> {{/if}}
@@ -142,7 +142,7 @@
                                     {{#if isCanVideo}}
                                     <a name="" id="disable-camera-participant" class="btn btn-primary" href="#" role="button">
                                         <i class="fa fa-video-camera" aria-hidden="true"></i>
-                                    </a>{{/else}}
+                                    </a>{{else}}
                                     <a name="" id="disable-camera-participant" class="btn btn-danger diagonal-line" href="#" role="button">
                                         <i class="fa fa-video-camera" aria-hidden="true"></i>
                                     </a>{{/if}}
@@ -174,11 +174,7 @@
         <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
         <script>
             var roomName = '{{this.roomInfo.roomName}}';
-            var isHost = {
-                {
-                    this.isHost
-                }
-            };
+            var isHost = {{this.isHost}};
             var userName = '{{this.userId}}';
         </script>
         <!-- This file is automatically added/served when running "node index.js". -->
