@@ -36,9 +36,8 @@ router.post('/login', async function(req, res) {
     let result = await userModel.get_user_by_email(req.body.username);
     console.log("start");
     console.log(result);
-    console.log(result);
 
-    let user = result;
+    let user = result[0];
     if (!user || user.Password !== req.body.password) {
         res.json({
             result: false,
@@ -88,3 +87,50 @@ router.get('/signup',async function(req, res){
     });
 
 });
+
+router.post('/signup', async function(req, res){
+
+    console.log('post signup');
+    console.log(req.body);
+
+    // check same email, encrypt password
+    // ...
+
+    const { v4: uuidv4 } = require('uuid');
+    const uniqueInsuranceId = uuidv4();
+
+    const result = await userModel.add(
+        uniqueInsuranceId,
+        req.body.name,
+        req.body.username,
+        req.body.password,
+        "",
+        "1995-03-16 00:00:00",
+        "013123123222"
+    );
+    console.log(result);
+    if(result.affectedRows == 1){
+
+        res.json({
+            result: true,
+            redirect: '/authen/login'
+        });
+    }
+    else{
+        res.json({
+            msg: 'sign up failed.'
+        });
+    }
+
+    // const result = await userModel.add({
+    //     UserID: uniqueInsuranceId,
+    //     Name: req.query.e,
+    //     Email: req.query.e,
+    //     Password: req.query.p,
+    //     AvatarUrl: '',
+    //     BirthDate: '',
+    //     PhoneNumber: '',
+    // });
+
+});
+

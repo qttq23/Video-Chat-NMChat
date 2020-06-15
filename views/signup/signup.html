@@ -34,10 +34,10 @@
     <div class="limiter">
         <div class="container-login100">
             <div class="wrap-login100 p-t-50 p-b-90">
-                <form class="login100-form validate-form flex-sb flex-w">
+                <form class="login100-form validate-form flex-sb flex-w" id="formSignup">
                     <span class="login100-form-title p-b-51">
-						Sign up
-					</span>
+                        Sign up
+                    </span>
 
 
                     <div class="wrap-input100 validate-input m-b-16" data-validate="Username is required">
@@ -52,7 +52,8 @@
                     </div>
 
                     <div class="wrap-input100 validate-input m-b-16" data-validate="Password is required">
-                        <input class="input100" type="password" name="re-pass" placeholder="Re-password" id="re-password">
+                        <input class="input100" type="password" name="re-pass" placeholder="Re-password"
+                            id="re-password">
                         <span class=" focus-input100 "></span>
                     </div>
 
@@ -61,10 +62,12 @@
                         <span class=" focus-input100 "></span>
                     </div>
 
+                    <div id="#divError"></div>
+
                     <div class="container-login100-form-btn m-t-17 ">
                         <button class="login100-form-btn " id="signup-button">
-							Signup
-						</button>
+                            Signup
+                        </button>
                     </div>
 
                 </form>
@@ -92,6 +95,6 @@
     <!--===============================================================================================-->
     <script src="/public/js/main.js "></script>
 
-</body>
+    <script src="/public/js-client-server/xsignup.js"></script>
 
 </html>
