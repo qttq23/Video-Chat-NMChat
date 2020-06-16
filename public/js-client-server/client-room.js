@@ -684,6 +684,7 @@ function getScreen(sourceId) {
 
 window.addEventListener("message", function (msg) {
     if (!msg.data) {
+        // window.open('/guide/share-screen-instruction.html');
         return;
     } else if (msg.data.sourceId) {
         getScreen(msg.data.sourceId);
@@ -691,12 +692,18 @@ window.addEventListener("message", function (msg) {
         $('#addon-not-found').hide();
         $('#share-my-screen').removeAttr('disabled');
     }
+
 }, false);
 
 
 var btnShareScreen = document.querySelector('#btnShareScreen');
 btnShareScreen.onclick = function () {
-    window.postMessage('requestScreenSourceId', '*');
+    if(confirm('Do you want to view instructions to enable share screen?') === true){
+        window.open('/guide/share-screen-instruction.html');
+    }
+    else{
+        window.postMessage('requestScreenSourceId', '*');
+    }
 };
 ///////////////
 
