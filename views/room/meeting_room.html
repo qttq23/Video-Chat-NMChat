@@ -193,14 +193,10 @@
         <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
         <script>
             var roomName = '{{this.roomInfo.roomName}}';
-            var isHost = {
-                {
-                    this.isHost
-                }
-            };
+            var isHost = {{this.isHost}};
             var userName = '{{this.userId}}';
 
-            $('.video-call').attr('poster', '/images/icons/icon-google.png');
+            $('.video-call').attr('poster', '/images/icons/default_user.png');
         </script>
         <!-- This file is automatically added/served when running "node index.js". -->
         <script src="/socket.io/socket.io.js"></script>
@@ -209,6 +205,7 @@
         <script type="text/javascript" src="/js-client-server/client-room.js"></script>
         <script src="/js-client-server/client-updownfile.js"></script>
         <script src="/js-client-server/client-invite.js"></script>
+        <script src="/js-client-server/applyConfig.js "></script>
 
 </body>
 
