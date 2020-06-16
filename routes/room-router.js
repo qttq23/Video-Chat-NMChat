@@ -89,10 +89,10 @@ router.get('/', async function (req, res) {
     console.log('get room: ' + req.query.id);
 
     // check restricts...
-    // if(req.session.isAlreadyInRoom === true){
-    //     res.end('You are already in one room. leave room to join another room.');
-    //     return;
-    // }
+    if(req.session.isAlreadyInRoom === true){
+        res.end('You are already in one room. leave room to join another room.');
+        return;
+    }
 
     var roomInfo = roomManager.getRoomInfo(req.query.id);
     console.log(roomInfo);

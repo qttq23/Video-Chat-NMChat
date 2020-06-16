@@ -19,8 +19,9 @@ router.get('/profile', function(req, res) {
     }
 
     (async() => {
-        const userProfile = await model.get_user_by_id(queryId);
+        let userProfile = await model.get_user_by_id(queryId);
         console.log(userProfile);
+        userProfile = userProfile[0];
 
         let isEdit = false;
         if(userProfile.UserID === req.session.account.UserID){
