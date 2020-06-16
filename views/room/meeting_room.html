@@ -50,6 +50,13 @@
 
 
         <div class="w-25" style="background-color: white; border-style:outset; border-color: grey; ">
+            <div id="divRoomInfo">
+                
+                Room: {{this.roomInfo.roomName}}
+                <br>
+                Host: {{this.roomInfo.host.Name}}{{#if isHost}}<b>(You)</b>{{/if}}
+                
+            </div>
             <div class="d-flex">
                 <button data-toggle="modal" data-target="#modalParticipants" type="button" name="" id="btnParticipants" class="btn btn-primary participants " btn-lg btn-block>
                     <i class="fa fa-eye" style="font-size: larger; color: white" aria-hidden="true">
@@ -57,9 +64,9 @@
                     </i>
                 </button>
                 <form action="" method="post" class="form-inline add-friend">
-                    <input type="text" class="form-control" placeholder="ID" id="id">
+                    <input type="text" class="form-control" placeholder="ID" id="edtInvite">
                     <div class="input-group-append">
-                        <button class="btn btn-primary" type="button">Mời</button>
+                        <button class="btn btn-primary" id="btnInvite" type="button">Mời</button>
                     </div>
                 </form>
             </div>
@@ -201,6 +208,7 @@
 
         <script type="text/javascript" src="/js-client-server/client-room.js"></script>
         <script src="/js-client-server/client-updownfile.js"></script>
+        <script src="/js-client-server/client-invite.js"></script>
 
 </body>
 

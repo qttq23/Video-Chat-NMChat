@@ -255,3 +255,45 @@ app.get('/friend/all', async function(req, res){
         friends: friendsToSend
     });
 });
+
+
+var nodemailer = require('nodemailer');
+app.post('/invite', async function(req, res){
+
+    console.log(' post /invite');
+    console.log(req.body);
+
+    let linkToRoom = `https://nmchat.herokuapp.com/room?id=` + req.session.roomInfo.roomName;
+    let toEmail = req.body.email;
+    let subject = 'NMChat invitation';
+    let content = req.session.account.Name + 
+        ' invited you to join room: ' +
+        `<a href="${linkToRoom}">${linkToRoom}</a>`
+
+    // send to email
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'nmchat2020@gmail.com',
+            pass: 'nmchat2020tkpm'
+        }
+    });
+
+    var mailOptions = {
+        from: 'nmchat2020@gmail.com',
+        to: toEmail,
+        subject: subject,
+        html: content,
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error);
+            res.json({result: true, msg: 'Failed to sent invitation'});
+        } else {
+            console.log('Email sent: ' + info.response);
+            res.json({ result: true, msg: 'Invitation email was sent to: ' + toEmail});
+        }
+    });
+});
+
