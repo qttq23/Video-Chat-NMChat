@@ -297,3 +297,12 @@ app.post('/invite', async function(req, res){
     });
 });
 
+// 404 error
+app.use(function (req, res) {
+    // res.render('error/error.html', {
+    //     isLayoutSimple: true,
+    //     title: '404 Not Found',
+    //     description: 'Sorry, an error has occured, Requested page not found!',
+    // });
+    res.status(404).send('404 Error! Page not found <a href="/home">go to home</a>');
+});

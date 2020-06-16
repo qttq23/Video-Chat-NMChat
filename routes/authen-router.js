@@ -6,7 +6,7 @@ module.exports = router;
 
 
 // login
-router.get('/login', function(req, res) {
+router.get('/login', function (req, res) {
 
     console.log('get login');
 
@@ -28,7 +28,7 @@ router.get('/login', function(req, res) {
     }
 });
 
-router.post('/login', async function(req, res) {
+router.post('/login', async function (req, res) {
 
     console.log(req.body);
 
@@ -45,11 +45,41 @@ router.post('/login', async function(req, res) {
         });
         return;
     }
-    // ...
 
+    // check if account already active in somewhere
+    function checkActive() {
+        return new Promise(
+            function (resolve, reject) {
+                req.sessionStore.all((err, sessions) => {
+                    console.log(sessions);
+
+                    for (var key of Object.keys(sessions)) {
+                        if (sessions[key].isLogin === true &&
+                            sessions[key].account.UserID == user.UserID) {
+
+
+                            // this means account already active
+                            // -> not allow multiple login
+                            console.log('found already active');
+                            res.json({
+                                result: false,
+                                msg: 'Your account already loggin in somewhere. Please logout first then try login'
+                            });
+                            return;
+                        }
+                    }
+
+                    resolve();
+                });
+            }
+
+        );
+    }
+    await checkActive();
+
+    // everything ok -> redirect to homepage
     req.session.isLogin = true;
     req.session.account = user;
-    // res.redirect('../home');
     res.json({
         result: true,
         redirect: '/home'
@@ -57,7 +87,7 @@ router.post('/login', async function(req, res) {
 });
 
 
-router.get('/signup',async function(req, res){
+router.get('/signup', async function (req, res) {
 
     console.log('get /signup');
     // console.log(req.query.e);
@@ -83,12 +113,12 @@ router.get('/signup',async function(req, res){
     // res.send(result);
 
     res.render('signup/signup', {
-        
+
     });
 
 });
 
-router.post('/signup', async function(req, res){
+router.post('/signup', async function (req, res) {
 
     console.log('post signup');
     console.log(req.body);
@@ -109,14 +139,14 @@ router.post('/signup', async function(req, res){
         "013123123222"
     );
     console.log(result);
-    if(result.affectedRows == 1){
+    if (result.affectedRows == 1) {
 
         res.json({
             result: true,
             redirect: '/authen/login'
         });
     }
-    else{
+    else {
         res.json({
             msg: 'sign up failed.'
         });
@@ -132,5 +162,21 @@ router.post('/signup', async function(req, res){
     //     PhoneNumber: '',
     // });
 
+});
+
+router.post('/logout', async function (req, res) {
+
+    console.log('post /logout');
+
+
+    // remove information
+    req.session.isLogin = false;
+    req.session.account = null;
+
+    // redirect to login
+    res.json({
+        result: true,
+        redirect: '../home'
+    });
 });
 

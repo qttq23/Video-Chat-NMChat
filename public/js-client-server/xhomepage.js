@@ -72,4 +72,23 @@ $(btnJoinDialog).click(function () {
     return false;
 });
 
+$('#btnSignout').click(()=>{
+    // submit
+    $.ajax({
+        method: 'post',
+        url: '/authen/logout',
+        data: {
+        }
 
+    }).done(function (json) {
+        console.log(json);
+
+        if (json.result === true) {
+            window.location.href = json.redirect;
+        }
+        else {
+            alert(json.msg);
+        }
+    });
+
+});
