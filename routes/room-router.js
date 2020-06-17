@@ -137,10 +137,9 @@ router.post('/leave', async function (req, res) {
 
     // save history leave room
     var day = new Date().toISOString().slice(0, 19).replace('T', ' ');
-    const result2 = await historyModel.update(
+    const result2 = await historyModel.update_leave_time(
         req.session.account.UserID,
         req.session.roomInfo.roomId,
-        '',
         day
     );
     console.log(result2);

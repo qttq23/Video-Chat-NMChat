@@ -43,7 +43,7 @@ module.exports = {
             host: host,
             messages: [],
             config: {
-                isVideo: true,   
+                isVideo: true,
                 isMicro: true,
                 isAudio: true
             }
@@ -61,18 +61,18 @@ module.exports = {
         );
         console.log(result);
 
-        
+
     },
 
     join: (roomName, client) => {
 
     },
 
-    getRoomInfo: (roomId)=>{
+    getRoomInfo: (roomId) => {
 
 
         let i = 0;
-        for(i = 0; i < roomList.length; i++){
+        for (i = 0; i < roomList.length; i++) {
             if (roomList[i].roomName == roomId) {
                 return roomList[i];
             }
@@ -101,7 +101,7 @@ module.exports = {
             socket.on('offer', (data) => {
                 console.log('a client send offer');
                 // console.log(data);
-               
+
 
 
                 socket.broadcast.in(socket.myRoom).emit('offer', data);
@@ -110,7 +110,7 @@ module.exports = {
             socket.on('answer', (data) => {
                 console.log('a client send answer');
                 // console.log(data);
-            
+
                 socket.broadcast.in(socket.myRoom).emit('answer', data);
             });
 
@@ -156,7 +156,7 @@ module.exports = {
 
                 if (numClients === 0) {
                     log('Client ID ' + socket.id + ' created room ' + room);
-                    
+
                     socket.leave(socket.id);
                     socket.join(room);
                     socket.emit('created', room, socket.id);
@@ -209,26 +209,35 @@ module.exports = {
 
             socket.on('disconnect', function () {
                 console.log('a client disconnected');
-                
-                
+
+
 
                 // check if just left is host
                 let i;
                 for (i = 0; i < roomList.length; i++) {
-                    if (roomList[i].roomName == socket.myRoom 
+                    if (roomList[i].roomName == socket.myRoom
                         && roomList[i].host == socket.myHost) {
 
-                        
+
                         console.log('is host leave');
-                        // host here
-                        // force others to leave
+                        // host leave -> force others to leave
                         socket.broadcast.in(socket.myRoom).emit('room finished');
+
+
+                        // update time leave on database
+                        var day = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                        // const result = await 
+                        roomModel.update_room_end_time(
+                            roomList[i].roomId,
+                            roomList[i].host.UserID,
+                            day
+                        );
+                        // console.log(result);
+                        console.log('update room end time ok');
+
 
                         // remove room info
                         roomList.pop(roomList[i]);
-
-                        // update time leave on database
-                        // roomModel.update(roomList[i].roomId, leavetime);
 
                         break;
                     }
@@ -238,7 +247,7 @@ module.exports = {
                 socket.leave(socket.myRoom);
                 socket.myRoom = null;
                 socket.myHost = null;
-                
+
 
             });
 
@@ -247,7 +256,7 @@ module.exports = {
                 console.log('client sent msg');
                 console.log(message);
 
-                if(message.to === 'all'){
+                if (message.to === 'all') {
                     // store to list messages in room
                     let i;
                     for (i = 0; i < roomList.length; i++) {
@@ -260,12 +269,12 @@ module.exports = {
                     console.log('broadcast msg');
                     socket.broadcast.in(socket.myRoom).emit('msg', message);
                 }
-                else{
+                else {
 
                 }
             });
 
-            socket.on('get messages', ()=>{
+            socket.on('get messages', () => {
                 console.log('client get list messages');
 
                 let i;
@@ -278,7 +287,7 @@ module.exports = {
                         console.log('room now has ' + room.messages.length);
 
                         let k;
-                        for(k = 0; k < room.messages.length; k++){
+                        for (k = 0; k < room.messages.length; k++) {
                             socket.emit('msg', room.messages[k]);
                         }
 
@@ -289,11 +298,11 @@ module.exports = {
                     }
                 }
 
-                
+
 
             });
 
-            socket.on('kick', (userId)=>{
+            socket.on('kick', (userId) => {
 
                 // loop all client
                 let room = io.sockets.adapter.rooms[socket.myRoom];
@@ -306,7 +315,7 @@ module.exports = {
                     //this is the socket of each client in the room.
                     var clientSocket = io.sockets.connected[clientId];
 
-                    if (clientSocket.myId === userId){
+                    if (clientSocket.myId === userId) {
 
                         console.log('found userId to kick');
 
@@ -336,7 +345,7 @@ module.exports = {
                 socket.broadcast.in(socket.myRoom).emit('config', config);
             });
 
-            socket.on('participants', ()=>{
+            socket.on('participants', () => {
                 // loop all client
                 let room = io.sockets.adapter.rooms[socket.myRoom];
                 let clients = room.sockets;
@@ -355,9 +364,9 @@ module.exports = {
                 socket.emit('participants', listParticipants);
             });
 
-            socket.on('main screen', (peerId)=>{
+            socket.on('main screen', (peerId) => {
                 console.log('host set main screen');
-                
+
                 // store main screen id
                 let i;
                 for (i = 0; i < roomList.length; i++) {
