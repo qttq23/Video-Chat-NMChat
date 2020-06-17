@@ -30,18 +30,20 @@ router.get('/login', function (req, res) {
 
 router.post('/login', async function (req, res) {
 
+    console.log('post /login');
     console.log(req.body);
 
     // check valid account
     let result = await userModel.get_user_by_email(req.body.username);
-    console.log("start");
-    console.log(result);
-
     let user = result[0];
-    if (!user || user.Password !== req.body.password) {
+    console.log(user);
+
+    
+    if (!user || req.body.password !== user.Password) {
+        console.log('not match');
         res.json({
             result: false,
-            msg: 'sign in failed!'
+            msg: 'sign in failed! Check your username and password'
         });
         return;
     }
@@ -124,15 +126,29 @@ router.post('/signup', async function (req, res) {
     console.log(req.body);
 
     // check same email, encrypt password
-    // ...
+    // get user by email
+    let user = await userModel.get_user_by_email(req.body.username);
+    console.log(user);
+    if(user && user.length > 0){
+        // email exists
+        res.json({
+            resutl: false,
+            msg: 'sign up failed. Email already exists'
+        });
+        return;
+    }
 
+
+
+    // generate uuid
     const { v4: uuidv4 } = require('uuid');
     const uniqueInsuranceId = uuidv4();
 
+    // save to database
     const result = await userModel.add(
         uniqueInsuranceId,
         req.body.name,
-        req.body.username,
+        req.body.username,  // email
         req.body.password,
         "",
         "1995-03-16 00:00:00",
@@ -148,19 +164,11 @@ router.post('/signup', async function (req, res) {
     }
     else {
         res.json({
+            result: false,
             msg: 'sign up failed.'
         });
     }
 
-    // const result = await userModel.add({
-    //     UserID: uniqueInsuranceId,
-    //     Name: req.query.e,
-    //     Email: req.query.e,
-    //     Password: req.query.p,
-    //     AvatarUrl: '',
-    //     BirthDate: '',
-    //     PhoneNumber: '',
-    // });
 
 });
 
