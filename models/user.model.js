@@ -3,7 +3,7 @@ const db = require('../utils/database.util');
 module.exports = {
     all: _ => db.query(`call get_users_all()`),
     add: async (userId, name, email, password, avatarUrl, birthday, phoneNumber) => {
-        console.log(`call add_user("${userId}","${name}","${email}","${avatarUrl}","${birthday}","${phoneNumber}")`);
+        console.log(`call add_user("${userId}","${name}","${email}", "${password}","${avatarUrl}","${birthday}","${phoneNumber}")`);
         const result = await db.query(`call add_user("${userId}","${name}","${email}","${password}","${avatarUrl}","${birthday}","${phoneNumber}")`);
 
         return result;

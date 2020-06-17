@@ -1,5 +1,6 @@
 const express = require('express');
 const userModel = require('../models/user.model');
+var bcrypt = require('bcryptjs');
 
 const router = express.Router();
 module.exports = router;
@@ -38,9 +39,12 @@ router.post('/login', async function (req, res) {
     let user = result[0];
     console.log(user);
 
+    // check hash
+    // console.log(bcrypt.compareSync(req.body.password, hash));
+
     
-    if (!user || req.body.password !== user.Password) {
-        console.log('not match');
+    // if (!user || req.body.password !== user.Password) {
+    if (!user || bcrypt.compareSync(req.body.password, user.Password) == false) {
         res.json({
             result: false,
             msg: 'sign in failed! Check your username and password'
@@ -138,6 +142,10 @@ router.post('/signup', async function (req, res) {
         return;
     }
 
+    // hash password
+    var salt = bcrypt.genSaltSync(10);
+    var hash = bcrypt.hashSync(req.body.password, salt);
+    console.log(hash);
 
 
     // generate uuid
@@ -149,7 +157,8 @@ router.post('/signup', async function (req, res) {
         uniqueInsuranceId,
         req.body.name,
         req.body.username,  // email
-        req.body.password,
+        // req.body.password,
+        hash,
         "",
         "1995-03-16 00:00:00",
         "013123123222"
