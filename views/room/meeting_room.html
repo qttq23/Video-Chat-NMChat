@@ -63,7 +63,7 @@
                         Participants
                     </i>
                 </button>
-                <button data-toggle="modal" data-target="#modalAddFriend" type="button" name="" id="btnParticipants" class="btn btn-primary participants " btn-lg btn-block>
+                <button data-toggle="modal" data-target="#modalAddFriend" type="button" name="" id="btnInviteDialog" class="btn btn-primary participants " btn-lg btn-block>
                     <i class="fa fa-plus" style="font-size: larger; color: white" aria-hidden="true">
                         Invite
                     </i>
@@ -182,8 +182,8 @@
                 <div class="modal-body">
                     <form action="" method="post" class="form-inline">
                         <label for=""></label>
-                        <input type="email" class="form-control" style="width: 80%;" name="" id="" aria-describedby="emailHelpId" placeholder="Email">
-                        <button class="btn btn-primary" type="submit" style="margin-left: auto; margin-right: 16px">Mời</button>
+                        <input type="email" class="form-control" style="width: 80%;" name="" id="edtInvite" aria-describedby="emailHelpId" placeholder="Email">
+                        <button class="btn btn-primary" id="btnInvite" type="submit" style="margin-left: auto; margin-right: 16px">Mời</button>
                     </form>
                     <hr>
                     <h5 class="modal-title w-100 font-weight-bold">Danh sách bạn bè</h5>
@@ -195,7 +195,8 @@
                                     <th>Email</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="txtFriends">
+                                <tr><td>loading...</td></tr>
                                 {{#each friends}}
                                 <tr>
                                     <td scope="row">name</td>
