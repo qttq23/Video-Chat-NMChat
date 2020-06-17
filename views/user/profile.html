@@ -33,17 +33,17 @@
                 <div class="d-flex flex-row ">
                     <a class="navbar-brand" href="#">
                         <div class="p-2 bd-highlight justify-content-center align-items-stretch">
-                            <i class="fa fa-home" aria-hidden="true"> Home</i>
+                            <i class="fa fa-home" aria-hidden="true" href="/home"> Home</i>
                         </div>
                     </a>
                     <a class="navbar-brand" href="#">
                         <div class="p-2 bd-highlight justify-content-center align-items-stretch">
-                            <i class="fa fa-comments-o" aria-hidden="true"> Chat</i>
+                            <i class="fa fa-comments-o" aria-hidden="true" href="/friend"> Friend</i>
                         </div>
                     </a>
                     <a class="navbar-brand" href="#">
                         <div class="p-2 bd-highlight justify-content-center align-items-stretch">
-                            <i class="fa fa-clock-o" aria-hidden="true"> Meeting</i>
+                            <i class="fa fa-clock-o" aria-hidden="true" href="/history"> History</i>
                         </div>
                     </a>
 
@@ -184,8 +184,12 @@
 
 
     <script>
-        let isEdit = {{this.isEdit}};
-        if(isEdit == false){
+        let isEdit = {
+            {
+                this.isEdit
+            }
+        };
+        if (isEdit == false) {
             // $('#button1').prop('disabled', true);
             $("#divBtnEdit").css("display", "none");
         }
