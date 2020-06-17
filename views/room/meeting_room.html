@@ -26,7 +26,7 @@
             <br>
             <br>
             <div class="row w-75 large-video">
-                <video class="video-call-large-screen col" id="remmote-video-large"></video>
+                <video class="video-call-large-screen col" id="remmote-video-large" autoplay playsinline muted></video>
             </div>
             <div class="group-button">
                 <a name="" id="btnMicro" id="iconMicro" class="btn btn-primary rounded-button" href="#" role="button">
@@ -39,6 +39,9 @@
                 <a name="" id="btnVideo" class="btn btn-primary rounded-button" href="#" role="button">
                     <i class="fa fa-video-camera icon-call " aria-hidden="true"></i>
                 </a>
+                <a name="" id="btnShareScreen" class="btn btn-primary rounded-button" href="#" role="button">
+                    share screen
+                </a>
                 <a name="" id="btnLeave" class="btn btn-danger leave-meeting" href="#" role="button">
                     {{#if isHost}}End Meeting{{else}}Leave Meeting{{/if}}
                 </a>
@@ -47,6 +50,13 @@
 
 
         <div class="w-25" style="background-color: white; border-style:outset; border-color: grey; ">
+            <div id="divRoomInfo">
+                
+                Room: {{this.roomInfo.roomName}}
+                <br>
+                Host: {{this.roomInfo.host.Name}}{{#if isHost}}<b>(You)</b>{{/if}}
+                
+            </div>
             <div class="d-flex">
                 <button data-toggle="modal" data-target="#modalParticipants" type="button" name="" id="btnParticipants" class="btn btn-primary participants " btn-lg btn-block>
                     <i class="fa fa-eye" style="font-size: larger; color: white" aria-hidden="true">
@@ -66,12 +76,12 @@
                 <p>{{message}}</p> {{/each}} </div>
             <div style="background-color:white ">
                 <div class="input-group">
-                    <form action="" method="post" class="form-inline">
+                    <form id="formSendMessage" action="" method="post" class="form-inline">
                         <input type="text" class="form-control" placeholder="Tin nhắn" id="message">
                         <div class="input-group-append">
                             <button class="btn btn-primary" type="submit">Gửi</button>
                         </div>
-                    </form>
+                    </form i>
                     <br>
                     <br><br>
                     <form ref="formUpload" id="formUpload" method="post" class="form-inline" action="/room/upload" encType="multipart/form-data">
@@ -129,7 +139,7 @@
                                     {{#if isCanAudio}}
                                     <a name="" id="mute-participant" class="btn btn-primary" href="#" role="button">
                                         <i class="fa fa-volume-up" aria-hidden="true"></i>
-                                    </a>{{/else}}
+                                    </a>{{else}}
                                     <a name="" id="mute-participant" class="btn btn-danger diagonal-line" href="#" role="button">
                                         <i class="fa fa-volume-up" aria-hidden="true"></i>
                                     </a> {{/if}}
@@ -138,7 +148,7 @@
                                     {{#if isCanVideo}}
                                     <a name="" id="disable-camera-participant" class="btn btn-primary" href="#" role="button">
                                         <i class="fa fa-video-camera" aria-hidden="true"></i>
-                                    </a>{{/else}}
+                                    </a>{{else}}
                                     <a name="" id="disable-camera-participant" class="btn btn-danger diagonal-line" href="#" role="button">
                                         <i class="fa fa-video-camera" aria-hidden="true"></i>
                                     </a>{{/if}}
@@ -200,48 +210,44 @@
         </div>
     </div>
 
-    <script src=" https://code.jquery.com/jquery-3.5.1.slim.min.js " integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj " crossorigin="anonymous "></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js " integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo " crossorigin="anonymous "></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js " integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI " crossorigin="anonymous "></script>
-
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js "></script>
-    <script src="/public/js/meeting_room.js "></script>
-
-    <!-- ////////////////// -->
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-    <script>
-        var roomName = '{{this.roomInfo.roomName}}';
-        var isHost = {
-            {
-                this.isHost
-            }
-        };
-        var userName = '{{this.userId}}';
-    </script>
-    <!-- This file is automatically added/served when running "node index.js". -->
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
 
 
-    <!-- ////////////////// -->
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-    <script>
-        var roomName = '{{this.roomInfo.roomName}}';
-        var isHost = {
-            {
-                this.isHost
-            }
-        };
-        var userName = '{{this.userId}}';
+        <script src=" https://code.jquery.com/jquery-3.5.1.slim.min.js " integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj " crossorigin="anonymous "></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js " integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo " crossorigin="anonymous "></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js " integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI " crossorigin="anonymous "></script>
 
-        $('.video-call').attr('poster', '/images/icons/icon-google.png');
-    </script>
-    <!-- This file is automatically added/served when running "node index.js". -->
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+        <script src="https://code.jquery.com/jquery-3.1.1.min.js "></script>
+        <script src="/public/js/meeting_room.js "></script>
 
-    <script type="text/javascript" src="/room/client-room.js"></script>
-    <script src="/room/client-updownfile.js"></script>
+        <!-- ////////////////// -->
+        <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+        <script>
+            var roomName = '{{this.roomInfo.roomName}}';
+            var isHost = {{this.isHost}};
+            var userName = '{{this.userId}}';
+        </script>
+        <!-- This file is automatically added/served when running "node index.js". -->
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+
+
+        <!-- ////////////////// -->
+        <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+        <script>
+            var roomName = '{{this.roomInfo.roomName}}';
+            var isHost = {{this.isHost}};
+            var userName = '{{this.userId}}';
+
+            $('.video-call').attr('poster', '/images/icons/default_user.png');
+        </script>
+        <!-- This file is automatically added/served when running "node index.js". -->
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+
+        <script type="text/javascript" src="/js-client-server/client-room.js"></script>
+        <script src="/js-client-server/client-updownfile.js"></script>
+        <script src="/js-client-server/client-invite.js"></script>
+        <script src="/js-client-server/applyConfig.js "></script>
 
 </body>
 

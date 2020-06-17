@@ -1,4 +1,7 @@
 
+
+const roomModel = require('../models/room.model');
+
 var roomList = [];
 
 module.exports = {
@@ -27,16 +30,36 @@ module.exports = {
         return false;
     },
 
-    create: (roomName, host) => {
+    create: async (roomName, host) => {
+
+        // const uuidv4 = require('uuid/v4');
+        const { v4: uuidv4 } = require('uuid');
+        const uniqueInsuranceId = uuidv4();
+
+
         roomList.push({
+            roomId: uniqueInsuranceId,
             roomName: roomName,
             host: host,
             messages: [],
             config: {
                 isVideo: true,   
-                isMicro: true 
+                isMicro: true,
+                isAudio: true
             }
         });
+
+        // save room to database
+        var day = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        const result = await roomModel.add(
+            uniqueInsuranceId,
+            // roomName,
+            roomName,
+            host.UserID,
+            day,
+            '',
+        );
+        console.log(result);
 
         
     },
@@ -111,6 +134,26 @@ module.exports = {
                 var numClients = clientsInRoom ? Object.keys(clientsInRoom.sockets).length : 0;
                 log('Room ' + room + ' now has ' + numClients + ' client(s)');
 
+
+                // after 2 seconds, check if room still exists
+                var timeoutCheckRoomExists = () => {
+                    setTimeout(function () {
+                        let i;
+                        for (i = 0; i < roomList.length; i++) {
+                            if (roomList[i].roomName == socket.myRoom) {
+                                console.log('room exists');
+                                return;
+                            }
+                        }
+
+                        // here means room was deleted
+                        // force user out of room
+                        console.log('room not exist, force leave');
+                        socket.emit('room finished');
+                    }
+                        , 3000);
+                };
+
                 if (numClients === 0) {
                     log('Client ID ' + socket.id + ' created room ' + room);
                     
@@ -129,13 +172,10 @@ module.exports = {
                         }
                     }
 
+                    timeoutCheckRoomExists();
+
                 } else if (1 <= numClients <= 3) {
                     log('Client ID ' + socket.id + ' joined room ' + room);
-
-                    // io.sockets.in(room).emit('join', room);
-                    // socket.join(room);
-                    // socket.emit('joined', room, socket.id);
-                    // io.sockets.in(room).emit('ready');
 
                     socket.leave(socket.id);
                     socket.join(room);
@@ -143,11 +183,14 @@ module.exports = {
 
                     socket.myRoom = room;
                     socket.myId = userId;
-                    // socket.broadcast.in(room).emit('joined', room, socket.id);
-                    // io.sockets.in(room).emit('ready');
+
+                    timeoutCheckRoomExists();
+
                 } else { // max two clients
                     socket.emit('full', room);
                 }
+
+
             });
 
             socket.on('ipaddr', function () {
@@ -175,14 +218,23 @@ module.exports = {
                     if (roomList[i].roomName == socket.myRoom 
                         && roomList[i].host == socket.myHost) {
 
+                        
                         console.log('is host leave');
                         // host here
                         // force others to leave
                         socket.broadcast.in(socket.myRoom).emit('room finished');
+
+                        // remove room info
+                        roomList.pop(roomList[i]);
+
+                        // update time leave on database
+                        // roomModel.update(roomList[i].roomId, leavetime);
+
                         break;
                     }
                 }
 
+                socket.broadcast.in(socket.myRoom).emit('peer out', socket.id);
                 socket.leave(socket.myRoom);
                 socket.myRoom = null;
                 socket.myHost = null;
@@ -232,6 +284,8 @@ module.exports = {
 
                         // also sent list of configs
                         socket.emit('config', room.config);
+                        // also sent current main screen id
+                        socket.emit('main screen', room.mainScreenId);
                     }
                 }
 
@@ -299,6 +353,21 @@ module.exports = {
 
                 // send to requester
                 socket.emit('participants', listParticipants);
+            });
+
+            socket.on('main screen', (peerId)=>{
+                console.log('host set main screen');
+                
+                // store main screen id
+                let i;
+                for (i = 0; i < roomList.length; i++) {
+                    if (roomList[i].roomName == socket.myRoom) {
+                        roomList[i].mainScreenId = peerId;
+                    }
+                }
+
+                socket.broadcast.in(socket.myRoom).emit('main screen', peerId);
+                socket.emit('main screen', peerId);
             });
 
         });

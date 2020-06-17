@@ -53,10 +53,27 @@ var peers = [];
 var isInRoom = false;
 var isGotMedia = false;
 
-var isMicro = false;
-var isVideo = true;
-var isAudio = true;
-var localConfig = null;
+// var isMicro = false;
+// var isVideo = true;
+// var isAudio = true;
+
+var camVideoTrack;
+var currentTrack;
+var microTrack;
+
+
+// status of devices are being used
+// by default, participant will not use micro
+// but use video and audio
+var currentState = {
+    isMicro: false,
+    isVideo: true,
+    isAudio: true,
+};
+
+// rules of room to use or not use devices
+var roomConfig = null;
+
 /////////////////////////////////////////////
 
 var room = roomName;
@@ -122,27 +139,11 @@ $('#btnLeave').click(function () {
 socket.on('room finished', () => {
     // host leave and force others to leave
     // participant just leave
+    console.log('room finished');
+    // alert('room finished');
     window.location.href = '/unknown?state=roomfinished';
 });
 
-socket.on('config', function (config) {
-
-    console.log(config);
-    localConfig = config;
-
-    // apply configs
-    if (config.isVideo === false) {
-
-        isVideo = true;
-        $('#btnVideo').trigger('click');
-    }
-    if (config.isMicro === false) {
-
-        isMicro = true;
-        $('#btnMicro').trigger('click');
-
-    }
-})
 
 //////////////////
 
@@ -159,6 +160,55 @@ socket.on('kicked', function () {
 
 });
 
+$('.video-call').click(function(){
+    // check if host
+    if(isHost === true){
+        console.log('host set main screen');
+
+        let peerId = $(this).attr('title');
+        if (!peerId || peerId == ''){
+            return;
+        }
+
+        // tell everyone set main screen
+        socket.emit('main screen', peerId);
+    }
+});
+
+socket.on('main screen', (peerId)=>{
+
+    forceMainScreen(peerId);
+});
+
+
+function forceMainScreen(peerId){
+
+    console.log('force main screen');
+    // get peerId
+    let peer = findPeerById(peerId);
+    let stream;
+    if (peer != null) {
+        stream = peer.stream;
+    }
+    else if (localId === peerId) {
+        stream = localStream;
+    }
+    else {
+        // maybe not yet connect to peerId
+        // wait some seconds and set main screen again
+        (() => {
+            setTimeout(() => {
+                forceMainScreen(peerId);
+            }, 3000);
+        })();
+        return;
+    }
+
+    // set to main screen
+    let mainVideo = document.querySelector('#remmote-video-large');
+    mainVideo.srcObject = stream;
+    mainVideo.title = peerId;
+}
 
 //////////////////
 
@@ -178,7 +228,7 @@ socket.on('created', function (room) {
     // isInitiator = true;
     isInRoom = true;
 
-    // request messages in room
+    // request messages and configs in room
     socket.emit('get messages');
 });
 
@@ -188,9 +238,141 @@ socket.on('joined', function (room) {
     // isChannelReady = true;
     isInRoom = true;
 
-    // request messages in room
+    // request messages and configs in room
     socket.emit('get messages');
 });
+
+// receive room configs
+socket.on('config', function (config) {
+
+    console.log(config);
+    roomConfig = config;
+
+    // apply configs
+    applyConfig(roomConfig);
+});
+
+// after this function
+// current state will be updated
+function applyConfig(config){
+    
+    if(config.isVideo === false){
+        turnOnVideo(false);
+    }
+    if(config.isMicro === false){
+        turnOnMicro(false);
+    }
+    if(config.isAudio === false){
+        turnOnAudio(false);
+    }
+    
+}
+
+function turnOnVideo(isOn){
+    if(isOn === true){
+        // start video
+        // ...
+        
+        // start show local
+        localVideo.srcObject = localStream;
+        
+        // start send to remotes
+        let i;
+        for (i = 0; i < peers.length; i++) {
+            var peer = peers[i];
+            var connection = peers[i].connection;
+            peer.videoSender.replaceTrack(camVideoTrack);
+        }
+    }
+    else{
+        // stop camera
+        // ...
+
+        // stop send remote
+        let i;
+        for (i = 0; i < peers.length; i++) {
+            var peer = peers[i];
+            var connection = peers[i].connection;
+            peer.videoSender.replaceTrack(null);
+        }
+
+        // stop show local
+        localVideo.srcObject = null;
+
+    }
+
+    // set current state
+    currentState.isVideo = isOn;
+    toggleVideoButton(isOn);
+}
+function turnOnMicro(isOn) {
+    if (isOn === true) {
+        // start micro
+        // ...
+
+        // start send to remotes
+        let i;
+        for (i = 0; i < peers.length; i++) {
+            var peer = peers[i];
+            var connection = peers[i].connection;
+            peer.microSender.replaceTrack(microTrack);
+        }
+
+    }
+    else {
+        // stop micro
+        // ...
+
+        // stop send remote
+        let i;
+        for (i = 0; i < peers.length; i++) {
+            var peer = peers[i];
+            var connection = peers[i].connection;
+            peer.microSender.replaceTrack(null);
+        }
+    }
+
+    // set current state
+    currentState.isMicro = isOn;
+    toggleMicroButton(isOn);
+}
+function turnOnAudio(isOn) {
+    if (isOn === true) {
+        // start hear audio
+        $(".remoteVideo").prop('muted', false);
+    }
+    else {
+        // stop hear audio
+        $(".remoteVideo").prop('muted', true);
+    }
+
+    // set current state
+    currentState.isAudio = isOn;
+    toggleAudioButton(isOn);
+}
+
+function canUseMicro(){
+    if(roomConfig != null){
+        return roomConfig.isMicro;
+    }
+
+    return true;
+}
+function canUseVideo(){
+    if(roomConfig != null){
+        return roomConfig.isVideo;
+    }
+
+    return true;
+}
+function canUseAudio() {
+    if (roomConfig != null) {
+        return roomConfig.isAudio;
+    }
+
+    return true;
+}
+
 
 ///////////////////////////////////////////////////////
 
@@ -202,141 +384,80 @@ console.log(remoteVideos);
 /////////////
 
 
-// micro button
-$('#btnMicro').click(function () {
-
-    if (isMicro == true) {
-
-        alert('click stop micro');
-
-        // stop micro
-        isMicro = false;
-        isMicroEnable = isMicro;
-
-        let i;
-        for (i = 0; i < peers.length; i++) {
-            var peer = peers[i];
-            var connection = peers[i].connection;
-            peer.microSender.replaceTrack(null);
-        }
-
-        // $(this).html('enable micro');
-    }
-    else {
-        // check config if can turn on micro
-        if (localConfig.isMicro === false) {
-            alert('host not allow you to use micro');
-            return;
-        }
-
-
-        alert('click start micro');
-
-        // start micro
-        isMicro = true;
-        isMicroEnable = isMicro;
-        let i;
-        for (i = 0; i < peers.length; i++) {
-            var peer = peers[i];
-            var connection = peers[i].connection;
-            peer.microSender.replaceTrack(microTrack);
-        }
-
-        // $(this).html('stop micro');
-    }
-});
 
 // video button
 $('#btnVideo').click(function () {
 
-    if (isVideo === true) {
+    if (currentState.isVideo === true) {
 
         alert('click stop video');
-
-        // stop video
-        isVideo = false;
-        isCallEnable = isVideo;
-        camVideoTrack.enabled = false;
-
-        // not show local
-        localVideo.srcObject = null;
-
-        // not send to remotes
-        let i;
-        for (i = 0; i < peers.length; i++) {
-            var peer = peers[i];
-            var connection = peers[i].connection;
-            peer.videoSender.replaceTrack(null);
-        }
-
-
-
-        // $(this).html('start video');
+        
+        turnOnVideo(false);
+        
     }
     else {
         // check config if can turn on video
-        if (localConfig.isVideo === false) {
+        if (canUseVideo() === false) {
             alert('host not allow you to use video');
             return;
         }
 
         alert('click start video');
-
-        // start video
-        isVideo = true;
-        isCallEnable = isVideo;
-        camVideoTrack.enabled = true;
-
-        // show local
-        localVideo.srcObject = localStream;
-
-        // send to remotes
-        let i;
-        for (i = 0; i < peers.length; i++) {
-            var peer = peers[i];
-            var connection = peers[i].connection;
-            peer.videoSender.replaceTrack(camVideoTrack);
-        }
-
-        // $(this).html('stop video');
+        turnOnVideo(true);
     }
 
 
 });
 
+// micro button
+$('#btnMicro').click(function () {
+
+
+    if (currentState.isMicro === true) {
+
+        alert('click stop micro');
+
+        turnOnMicro(false);
+
+    }
+    else {
+        // check config if can turn on video
+        if (canUseMicro() === false) {
+            alert('host not allow you to use micro');
+            return;
+        }
+
+        alert('click start micro');
+        turnOnMicro(true);
+    }
+
+});
 
 // audio button
 $('#btnAudio').click(function () {
 
-    if (isAudio === true) {
+    if (currentState.isAudio === true) {
 
         alert('click stop audio');
 
-        // stop audio
-        isAudio = false;
-        isAudioEnable = isAudio;
+        turnOnAudio(false);
 
-        $(".remoteVideo").prop('muted', true);
-
-
-        // $(this).html('start audio');
     }
     else {
+        // check config if can turn on video
+        if (canUseAudio() === false) {
+            alert('host not allow you to use audio');
+            return;
+        }
 
-        alert('click  start audio');
-
-        // start micro
-        isAudio = true;
-
-        isAudioEnable = isAudio;
-
-        $(".remoteVideo").prop('muted', false);
-
-        // $(this).html('stop audio');
+        alert('click start audio');
+        turnOnAudio(true);
     }
+
 });
 
 
+// check box
 $('#checkVideo').click(function () {
     setConfig();
 });
@@ -347,7 +468,11 @@ $('#checkMicro').click(function () {
 
 function setConfig() {
 
-    let config = { isVideo: false, isMicro: false };
+    let config = { 
+        isVideo: true, 
+        isMicro: true,
+        isAudio: true,
+    };
     config.isVideo = $("#checkVideo").is(':checked');
     config.isMicro = $("#checkMicro").is(':checked');
 
@@ -358,7 +483,7 @@ function setConfig() {
 }
 
 // send messages
-$(btnSend).click(function () {
+$("#formSendMessage").submit(function (e) {
 
     // get content in edit box
     let content = $(input_message).val();
@@ -377,6 +502,8 @@ $(btnSend).click(function () {
     // update local messages
     $(txtMessages).append('<br>' + 'you: ' + content);
     $(input_message).val('');
+
+    return false;
 });
 
 socket.on('msg', (message) => {
@@ -431,6 +558,20 @@ socket.on('participants', (participants) => {
     }
 });
 
+socket.on('peer out', (peerId)=>{
+    
+    
+    // remove logic
+    // let peer = findPeerById(peerId);
+    // peers.pop(peer);
+
+    // remove ui
+    let i = findIndexById(peerId);
+    try {
+        remoteVideos[i].style.display = "none";
+    }
+    catch (err) {}
+});
 ///////////////
 
 navigator.mediaDevices.getUserMedia({
@@ -443,19 +584,17 @@ navigator.mediaDevices.getUserMedia({
     });
 
 
-var camVideoTrack;
-var currentTrack;
-var microTrack;
 
 function gotStream(stream) {
     console.log('Adding local stream.');
     localStream = stream;
     localVideo.srcObject = stream;
+    localVideo.title = localId;
     isGotMedia = true;
 
     // apply config
-    if (isVideo === false) {
-        localVideo.srcObject = null;
+    if(roomConfig != null){
+        applyConfig(roomConfig);
     }
 
     // get tracks
@@ -471,6 +610,8 @@ function gotStream(stream) {
                 myTimeout();
             }
             else {
+                // already in room and got media
+                // send ready signal to others
                 console.log('is in room, and got stream => READY');
                 socket.emit('got user media', { from: localId });
 
@@ -483,10 +624,88 @@ function gotStream(stream) {
 
 }
 
-var constraints = {
-    video: true
-};
+////////////////////////////////////
+/////////////
 
+function getScreen(sourceId) {
+    var constraints = {
+        mandatory: {
+            chromeMediaSource: 'desktop',
+            maxWidth: screen.width > 1920 ? screen.width : 1920,
+            maxHeight: screen.height > 1080 ? screen.height : 1080,
+            chromeMediaSourceId: sourceId
+        },
+        optional: [
+            { googTemporalLayeredScreencast: true }
+        ]
+    };
+    navigator.getUserMedia({ video: constraints },
+        stream => {
+
+            // add new stream to local
+            console.log('changed local stream to screen. num connections: ' + peers.length);
+            // localStream = stream;
+            localVideo.srcObject = stream;
+            currentTrack = stream.getVideoTracks()[0];
+
+            // re-add stream track to all remotes
+            var i;
+            for (i = 0; i < peers.length; i++) {
+                var peer = peers[i];
+                var connection = peers[i].connection;
+
+                peer.videoSender.replaceTrack(currentTrack);
+            }
+
+
+            // when stop share
+            stream.getVideoTracks()[0].onended = function () {
+                // doWhatYouNeedToDo();
+                // switch
+                localVideo.srcObject = localStream;
+                currentTrack = localStream.getVideoTracks()[0];;
+
+
+                // re-add stream track to all remotes
+                var i;
+                for (i = 0; i < peers.length; i++) {
+                    var peer = peers[i];
+                    var connection = peers[i].connection;
+                    peer.videoSender.replaceTrack(currentTrack);
+                }
+            };
+
+        },
+        error => {
+            console.log(error);
+        }
+    );
+}
+
+window.addEventListener("message", function (msg) {
+    if (!msg.data) {
+        // window.open('/guide/share-screen-instruction.html');
+        return;
+    } else if (msg.data.sourceId) {
+        getScreen(msg.data.sourceId);
+    } else if (msg.data.addonInstalled) {
+        $('#addon-not-found').hide();
+        $('#share-my-screen').removeAttr('disabled');
+    }
+
+}, false);
+
+
+var btnShareScreen = document.querySelector('#btnShareScreen');
+btnShareScreen.onclick = function () {
+    if(confirm('Do you want to view instructions to enable share screen?') === true){
+        window.open('/guide/share-screen-instruction.html');
+    }
+    else{
+        window.postMessage('requestScreenSourceId', '*');
+    }
+};
+///////////////
 
 
 ///////////////////////////////////////////////////////
@@ -509,12 +728,10 @@ socket.on('got user media', (data) => {
     // connection.addStream(localStream);
     newPeer.videoSender = connection.addTrack(currentTrack, localStream);
     newPeer.microSender = connection.addTrack(microTrack, localStream);
-    if (isMicro === false) {
-        console.log('is micro: ' + isMicro);
+    if (currentState.isMicro === false) {
         newPeer.microSender.replaceTrack(null);
     }
-    if (isVideo === false) {
-        console.log('is video: ' + isVideo);
+    if (currentState.isVideo === false) {
         newPeer.videoSender.replaceTrack(null);
     }
 
@@ -554,12 +771,10 @@ socket.on('offer', (data) => {
         // connection.addStream(localStream);
         newPeer.videoSender = connection.addTrack(currentTrack, localStream);
         newPeer.microSender = connection.addTrack(microTrack, localStream);
-        if (isMicro === false) {
-            console.log('is micro: ' + isMicro);
+        if (currentState.isMicro === false) {
             newPeer.microSender.replaceTrack(null);
         }
-        if (isVideo === false) {
-            console.log('is video: ' + isVideo);
+        if (currentState.isVideo === false) {
             newPeer.videoSender.replaceTrack(null);
         }
 
@@ -673,6 +888,7 @@ function createPeerConnection(toId) {
             var index = findIndexById(toId);
             console.log('found index: ' + index);
             remoteVideos[index].srcObject = event.stream;
+            remoteVideos[index].title = toId;
         };
 
         //https://stackoverflow.com/questions/60636439/webrtc-how-to-detect-when-a-stream-or-track-gets-removed-from-a-peerconnection
@@ -718,7 +934,7 @@ function createPeerConnection(toId) {
 }
 
 function findPeerById(id) {
-    var i;
+    let i;
     for (i = 0; i < peers.length; i++) {
         if (peers[i].id == id) {
             return peers[i];
@@ -728,7 +944,7 @@ function findPeerById(id) {
 }
 
 function findIndexById(id) {
-    var i;
+    let i;
     for (i = 0; i < peers.length; i++) {
         if (peers[i].id == id) {
             return i;
