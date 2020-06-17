@@ -63,12 +63,11 @@
                         Participants
                     </i>
                 </button>
-                <form action="" method="post" class="form-inline add-friend">
-                    <input type="text" class="form-control" placeholder="ID" id="edtInvite">
-                    <div class="input-group-append">
-                        <button class="btn btn-primary" id="btnInvite" type="button">Mời</button>
-                    </div>
-                </form>
+                <button data-toggle="modal" data-target="#modalAddFriend" type="button" name="" id="btnParticipants" class="btn btn-primary participants " btn-lg btn-block>
+                    <i class="fa fa-plus" style="font-size: larger; color: white" aria-hidden="true">
+                        Invite
+                    </i>
+                </button>
             </div>
 
             <hr>
@@ -168,6 +167,49 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="modal fade" id="modalAddFriend" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <h4 class="modal-title w-100 font-weight-bold">Mời bạn</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="post" class="form-inline">
+                        <label for=""></label>
+                        <input type="email" class="form-control" style="width: 80%;" name="" id="" aria-describedby="emailHelpId" placeholder="Email">
+                        <button class="btn btn-primary" type="submit" style="margin-left: auto; margin-right: 16px">Mời</button>
+                    </form>
+                    <hr>
+                    <h5 class="modal-title w-100 font-weight-bold">Danh sách bạn bè</h5>
+                    <div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Tên</th>
+                                    <th>Email</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each friends}}
+                                <tr>
+                                    <td scope="row">name</td>
+                                    <td>email</td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 
         <script src=" https://code.jquery.com/jquery-3.5.1.slim.min.js " integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj " crossorigin="anonymous "></script>
