@@ -60,7 +60,7 @@ var isGotMedia = false;
 var camVideoTrack;
 var currentTrack;
 var microTrack;
-
+var mainVideo = document.querySelector('#remmote-video-large');
 
 // status of devices are being used
 // by default, participant will not use micro
@@ -191,7 +191,8 @@ function forceMainScreen(peerId){
         stream = peer.stream;
     }
     else if (localId === peerId) {
-        stream = localStream;
+        console.log('set local video as main video');
+        stream = localVideo.srcObject;
     }
     else {
         // maybe not yet connect to peerId
@@ -205,7 +206,7 @@ function forceMainScreen(peerId){
     }
 
     // set to main screen
-    let mainVideo = document.querySelector('#remmote-video-large');
+    
     mainVideo.srcObject = stream;
     mainVideo.title = peerId;
 }
@@ -275,6 +276,9 @@ function turnOnVideo(isOn){
         
         // start show local
         localVideo.srcObject = localStream;
+        if(mainVideo.title == localId){
+            mainVideo.srcObject = localStream;
+        }
         
         // start send to remotes
         let i;
@@ -298,6 +302,9 @@ function turnOnVideo(isOn){
 
         // stop show local
         localVideo.srcObject = null;
+        if(mainVideo.title == localId){
+            mainVideo.srcObject = null;
+        }
 
     }
 
@@ -647,6 +654,9 @@ function getScreen(sourceId) {
             // localStream = stream;
             localVideo.srcObject = stream;
             currentTrack = stream.getVideoTracks()[0];
+            if(mainVideo.title == localId){
+                mainVideo.srcObject = stream;
+            }
 
             // re-add stream track to all remotes
             var i;
@@ -663,7 +673,10 @@ function getScreen(sourceId) {
                 // doWhatYouNeedToDo();
                 // switch
                 localVideo.srcObject = localStream;
-                currentTrack = localStream.getVideoTracks()[0];;
+                currentTrack = localStream.getVideoTracks()[0];
+                if (mainVideo.title == localId) {
+                    mainVideo.srcObject = localStream;
+                }
 
 
                 // re-add stream track to all remotes
@@ -897,11 +910,15 @@ function createPeerConnection(toId) {
                 // if (!video.srcObject) video.srcObject = stream;
                 console.log('on ummute');
 
-                // if (track.kind === 'video') {
-                //     // replace video by stream
-                //     var index = findIndexById(toId);
-                //     remoteVideos[index].srcObject = stream;
-                // }
+                if (track.kind === 'video') {
+                    // replace video by stream
+                    var index = findIndexById(toId);
+                    remoteVideos[index].srcObject = stream;
+
+                    if (mainVideo.title === toId) {
+                        mainVideo.srcObject = stream;
+                    }
+                }
 
             };
             stream.onremovetrack = ({ track }) => {
@@ -913,11 +930,15 @@ function createPeerConnection(toId) {
                 console.log(track);
 
 
-                // if (track.kind === 'video') {
-                //     // replace video by image
-                //     var index = findIndexById(toId);
-                //     remoteVideos[index].srcObject = null;
-                // }
+                if (track.kind === 'video') {
+                    // replace video by image
+                    var index = findIndexById(toId);
+                    remoteVideos[index].srcObject = null;
+
+                    if(mainVideo.title === toId){
+                        mainVideo.srcObject = null;
+                    }
+                }
             };
         };
 
