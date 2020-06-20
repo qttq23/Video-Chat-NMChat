@@ -21,9 +21,9 @@
              style="margin-left: 10px;overflow-x: auto;">
                 <video class="video-call localVideo" id="local-video" autoplay playsinline muted></video>
                 <video class="video-call remoteVideo" id="remote-video-1" autoplay playsinline></video>
-                <video class="video-call remoteVideo" id="remote-video-2" autoplay playsinline></video>
+                <!-- <video class="video-call remoteVideo" id="remote-video-2" autoplay playsinline></video>
                 <video class="video-call remoteVideo" id="remote-video-3" autoplay playsinline></video>
-                <video class="video-call remoteVideo" id="remote-video-4" autoplay playsinline></video>
+                <video class="video-call remoteVideo" id="remote-video-4" autoplay playsinline></video> -->
 
             </div>
             <br>
@@ -245,6 +245,8 @@
 
             // $('.video-call').attr('poster', '/images/icons/default_user.png');
         </script>
+        <script src="/js-client-server/client-config.js "></script>
+
         <!-- This file is automatically added/served when running "node index.js". -->
         <script src="/socket.io/socket.io.js"></script>
         <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
@@ -252,7 +254,6 @@
         <script type="text/javascript" src="/js-client-server/client-room.js"></script>
         <script src="/js-client-server/client-updownfile.js"></script>
         <script src="/js-client-server/client-invite.js"></script>
-        <script src="/js-client-server/client-config.js "></script>
 
 </body>
 

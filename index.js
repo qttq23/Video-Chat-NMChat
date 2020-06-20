@@ -163,12 +163,12 @@ app.get('/history/all', async function(req, res){
     for(i = 0; i < result.length; i++){
         // let room = await roomModel.get_room_by_id(result[i].RoomID);
         let room = await db.query(`select * from rooms where RoomID="${result[i].RoomID}"`);
-        console.log(room);
+        // console.log(room);
         room = room[0];
 
         let host = await userModel.get_user_by_id(room.HostID);
         // let host = await db.query(room.HostID);
-        console.log(host);
+        // console.log(host);
         host = host[0];
 
         let history = {
@@ -177,7 +177,7 @@ app.get('/history/all', async function(req, res){
             roomName: room.RoomName,
             hostName: host.Email
         };
-        console.log(history);
+        // console.log(history);
         histories.push(history);
     }
 

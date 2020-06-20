@@ -160,20 +160,24 @@ socket.on('kicked', function () {
 
 });
 
-$('.video-call').click(function(){
-    // check if host
-    if(isHost === true){
-        console.log('host set main screen');
+$(()=>{
 
-        let peerId = $(this).attr('title');
-        if (!peerId || peerId == ''){
-            return;
+    $('.video-call').click(function () {
+        // check if host
+        if (isHost === true) {
+            console.log('host set main screen');
+
+            let peerId = $(this).attr('title');
+            if (!peerId || peerId == '') {
+                return;
+            }
+
+            // tell everyone set main screen
+            socket.emit('main screen', peerId);
         }
-
-        // tell everyone set main screen
-        socket.emit('main screen', peerId);
-    }
+    });
 });
+
 
 socket.on('main screen', (peerId)=>{
 
@@ -404,7 +408,7 @@ $('#btnVideo').click(function () {
 
     if (currentState.isVideo === true) {
 
-        // alert('click stop video');
+        alert('click stop video');
         
         turnOnVideo(false);
         
@@ -416,7 +420,7 @@ $('#btnVideo').click(function () {
             return;
         }
 
-        // alert('click start video');
+        alert('click start video');
         turnOnVideo(true);
     }
 
@@ -550,7 +554,7 @@ socket.on('participants', (participants) => {
         }
 
         let html = `
-            <div class="participant-cell">
+            <div class="participant-cell" onclick="$('#edtKick').val('${participants[i]}');">
                 <span>${name}</span>
                 <div class="cell-options">
                     <a name="" id="mute-participant" class="btn btn-danger diagonal-line" href="#"
@@ -766,6 +770,7 @@ socket.on('got user media', (data) => {
         socket.emit('offer', {
             from: localId,
             to: newPeer.id,
+            email: userName,
             message: sessionDescription
         });
 
@@ -784,7 +789,8 @@ socket.on('offer', (data) => {
         var connection = createPeerConnection(data.from);
         var newPeer = {
             id: data.from,
-            connection: connection
+            connection: connection,
+            email: data.email
         };
         peers.push(newPeer);
 
@@ -941,9 +947,9 @@ function createPeerConnection(toId) {
                 if (track.kind === 'video') {
                     // replace video by image
                     var index = findIndexById(toId);
+                    var peer = findPeerById(toId);
                     remoteVideos[index].srcObject = null;
-                    // $(remoteVideos[index]).attr('poster', getIconUrl(peers[index].email));
-                    setVideoPoster(remoteVideos[index], peers[index].email);
+                    setVideoPoster(remoteVideos[index], peer.email);
 
                     if(mainVideo.title === toId){
                         mainVideo.srcObject = null;
@@ -1036,10 +1042,11 @@ function setVideoPoster(video, userId) {
         error: function (xhr) {
             console.log('no source found, try set default poster');
             $(video).attr('poster', '/images/icons/default_user.png');
+            return;
         },
         success: function (json) {
             $(video).attr('poster', `/upload/user/${userId}/icon.png`);
-
+            return;
         }
     });
 }
