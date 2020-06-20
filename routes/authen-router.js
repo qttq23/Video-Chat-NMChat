@@ -1,6 +1,7 @@
 const express = require('express');
 const userModel = require('../models/user.model');
 var bcrypt = require('bcryptjs');
+const config = require('../config.json');
 
 const router = express.Router();
 module.exports = router;
@@ -52,36 +53,40 @@ router.post('/login', async function (req, res) {
         return;
     }
 
-    // check if account already active in somewhere
-    function checkActive() {
-        return new Promise(
-            function (resolve, reject) {
-                req.sessionStore.all((err, sessions) => {
-                    console.log(sessions);
 
-                    for (var key of Object.keys(sessions)) {
-                        if (sessions[key].isLogin === true &&
-                            sessions[key].account.UserID == user.UserID) {
+    if (config.AllowMultipleLogin == false){
+        // check if account already active in somewhere
+        function checkActive() {
+            return new Promise(
+                function (resolve, reject) {
+                    req.sessionStore.all((err, sessions) => {
+                        console.log(sessions);
+
+                        for (var key of Object.keys(sessions)) {
+                            if (sessions[key].isLogin === true &&
+                                sessions[key].account.UserID == user.UserID) {
 
 
-                            // this means account already active
-                            // -> not allow multiple login
-                            console.log('found already active');
-                            res.json({
-                                result: false,
-                                msg: 'Your account already loggin in somewhere. Please logout first then try login'
-                            });
-                            return;
+                                // this means account already active
+                                // -> not allow multiple login
+                                console.log('found already active');
+                                res.json({
+                                    result: false,
+                                    msg: 'Your account already loggin in somewhere. Please logout then try again'
+                                });
+                                return;
+                            }
                         }
-                    }
 
-                    resolve();
-                });
-            }
+                        resolve();
+                    });
+                }
 
-        );
+            );
+        }
+        await checkActive();
     }
-    await checkActive();
+    
 
     // everything ok -> redirect to homepage
     req.session.isLogin = true;

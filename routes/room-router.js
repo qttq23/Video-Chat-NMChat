@@ -7,6 +7,7 @@ const roomManager = require('../utils/room-manager');
 roomManager.startSocketIO();
 
 const historyModel = require('../models/join_history.model');
+const config = require('../config.json');
 
 
 
@@ -20,7 +21,9 @@ router.post('/create', async function (req, res) {
     const host = req.session.account;
 
     // check restricts...
-    if (req.session.isAlreadyInRoom === true) {
+    if (config.AllowMultipleJoinRoom == false &&
+        req.session.isAlreadyInRoom === true){
+    
         res.json({
             result: false,
             msg: 'You are already in one room. leave room to create another room.'
@@ -56,7 +59,8 @@ router.post('/join', function (req, res) {
     const participant = req.session.account;
 
     // check restricts...
-    if (req.session.isAlreadyInRoom === true) {
+    if (config.AllowMultipleJoinRoom == false &&
+        req.session.isAlreadyInRoom === true) {
         res.json({
             result: false,
             msg: 'You are already in one room. leave room to join another room.'
@@ -89,7 +93,8 @@ router.get('/', async function (req, res) {
     console.log('get room: ' + req.query.id);
 
     // check restricts...
-    if(req.session.isAlreadyInRoom === true){
+    if (config.AllowMultipleJoinRoom == false &&
+        req.session.isAlreadyInRoom === true) {
         res.end('You are already in one room. leave room to join another room.');
         return;
     }

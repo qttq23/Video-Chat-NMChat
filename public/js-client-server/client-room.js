@@ -243,6 +243,10 @@ socket.on('joined', function (room) {
     socket.emit('get messages');
 });
 
+socket.on('full', function(){
+    window.location.href = '/unknown?state=roomFull';
+});
+
 // receive room configs
 socket.on('config', function (config) {
 
@@ -397,7 +401,7 @@ $('#btnVideo').click(function () {
 
     if (currentState.isVideo === true) {
 
-        alert('click stop video');
+        // alert('click stop video');
         
         turnOnVideo(false);
         
@@ -409,7 +413,7 @@ $('#btnVideo').click(function () {
             return;
         }
 
-        alert('click start video');
+        // alert('click start video');
         turnOnVideo(true);
     }
 
@@ -422,7 +426,7 @@ $('#btnMicro').click(function () {
 
     if (currentState.isMicro === true) {
 
-        alert('click stop micro');
+        // alert('click stop micro');
 
         turnOnMicro(false);
 
@@ -434,7 +438,7 @@ $('#btnMicro').click(function () {
             return;
         }
 
-        alert('click start micro');
+        // alert('click start micro');
         turnOnMicro(true);
     }
 
@@ -445,7 +449,7 @@ $('#btnAudio').click(function () {
 
     if (currentState.isAudio === true) {
 
-        alert('click stop audio');
+        // alert('click stop audio');
 
         turnOnAudio(false);
 
@@ -457,7 +461,7 @@ $('#btnAudio').click(function () {
             return;
         }
 
-        alert('click start audio');
+        // alert('click start audio');
         turnOnAudio(true);
     }
 

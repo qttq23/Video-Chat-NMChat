@@ -1,5 +1,5 @@
-const model = require('./models/user.model');
-const roomModel = require('./models/room.model');
+const model = require('../models/user.model');
+const roomModel = require('../models/room.model');
 
 // console.log((async() => await model.update_user(
 //     "63b1255c-88dc-4710-a314-770188709995",

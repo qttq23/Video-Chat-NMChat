@@ -7,6 +7,7 @@ const http = require('http');
 const socketIO = require('socket.io');
 
 const fileUpload = require('express-fileupload');
+const config = require('./config.json');
 
 // create express app
 const app = express();
@@ -29,7 +30,7 @@ app.use(express.urlencoded({
 // receive file upload
 app.use(fileUpload({
     createParentPath: true,
-    // limits: { fileSize: 50 * 1024 * 1024 },
+    limits: { fileSize: /*1 MB = 1024 * 1024*/config.MaxSizeFileUpload }
 })
 );
 
@@ -55,7 +56,7 @@ app.use(express.static('.'));
 app.use(expSession(
     {
         secret: 'keyboard cat',
-        cookie: { maxAge: 60000 * 600 },
+        cookie: { maxAge: /*1min = 60 * 60 */config.MaxSessionTime },
         resave: false,
         saveUninitialized: true,
     })
@@ -118,6 +119,10 @@ app.get('/unknown', function(req, res){
     }
     else if(state === 'roomfinished'){
         req.session.pendingMsg = 'room was finished by host';
+    }
+    else if(state === 'roomFull'){
+        
+        req.session.pendingMsg = 'room was full. please try another time';
     }
     res.redirect('/home');
 
@@ -263,7 +268,7 @@ app.post('/invite', async function(req, res){
     console.log(' post /invite');
     console.log(req.body);
 
-    let linkToRoom = `https://nmchat.herokuapp.com/room?id=` + req.session.roomInfo.roomName;
+    let linkToRoom = `${config.AppDomain}/room?id=` + req.session.roomInfo.roomName;
     let toEmail = req.body.email;
     let subject = 'NMChat invitation';
     let content = req.session.account.Name + 
@@ -272,15 +277,17 @@ app.post('/invite', async function(req, res){
 
     // send to email
     var transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: 'nmchat2020@gmail.com',
-            pass: 'nmchat2020tkpm'
-        }
+        // service: 'gmail',
+        // auth: {
+        //     user: 'nmchat2020@gmail.com',
+        //     pass: 'nmchat2020tkpm'
+        // }
+        service: config.Email.service,
+        auth: config.Email.auth
     });
 
     var mailOptions = {
-        from: 'nmchat2020@gmail.com',
+        from: config.Email.auth.user,
         to: toEmail,
         subject: subject,
         html: content,

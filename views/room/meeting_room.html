@@ -12,9 +12,10 @@
 
 <!-- <body class="w-100 h-100" style="background-color: darkgrey;overflow-x: hidden;overflow-y: hidden;"> -->
 
-<body class="w-100 h-100" style="background-color: darkgrey;">
+<body id="bodyRoom" class="w-100 h-100" style="background-color: darkgrey;">
     <div class="flex row">
-        <div class=" w-75 col " style="background-color:darkgrey;">
+        <!-- <div class=" w-75 col " id="panelVideo" style="background-color:darkgrey;"> -->
+        <div class=" w-75 col " id="panelVideo" style="background-color:darkgrey;">
 
             <div class="row w-100 video-call-parent" style="margin-left: 10px;">
                 <video class="video-call localVideo" id="local-video" autoplay playsinline muted></video>
@@ -49,7 +50,7 @@
         </div>
 
 
-        <div class="w-25" style="background-color: white; border-style:outset; border-color: grey; ">
+        <div class="w-25" id="panelChat" style="background-color: white; border-style:outset; border-color: grey; ">
             <div id="divRoomInfo">
                 
                 Room: {{this.roomInfo.roomName}}
@@ -74,7 +75,7 @@
             <div id="txtMessages" style="overflow:scroll ; height:80%; margin-left: 10px ">
                 {{#each messages}}
                 <p>{{message}}</p> {{/each}} </div>
-            <div style="background-color:white ">
+            <div id="panelInput" style="background-color:white ">
                 <div class="input-group">
                     <form id="formSendMessage" action="" method="post" class="form-inline">
                         <input type="text" class="form-control" placeholder="Tin nhắn" id="message">
@@ -248,7 +249,7 @@
         <script type="text/javascript" src="/js-client-server/client-room.js"></script>
         <script src="/js-client-server/client-updownfile.js"></script>
         <script src="/js-client-server/client-invite.js"></script>
-        <script src="/js-client-server/applyConfig.js "></script>
+        <script src="/js-client-server/client-config.js "></script>
 
 </body>
 

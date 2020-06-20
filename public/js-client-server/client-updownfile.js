@@ -1,9 +1,26 @@
+$('#myfile').on('change', function(e){
 
+    // check file size limit
+    console.log(config.MaxFileSizeUpload);
+
+    let file = e.currentTarget.files[0];
+    console.log(file);
+    if (file.size > config.MaxFileSizeUpload) {
+        let sizeInMB = config.MaxFileSizeUpload / (1024*1024);
+        alert(`Maximum file size is ${sizeInMB} MB`);
+        $('#myfile').val('');
+        
+    }
+});
 
 // < !--form upload-- >
 $('#formUpload').submit(function () {
     // check abcxyz
     //...
+    if($('#myfile').get(0).files.length === 0){
+        alert('No file was choosen');
+        return false;
+    }
 
     // submit
     $.ajax({

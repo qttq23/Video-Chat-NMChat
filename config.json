@@ -1,0 +1,32 @@
+{
+    "MaxSizeFileUpload": 10485760,
+    "MaxSessionTime": 36000000,
+    "AppDomain": "https://nmchat.herokuapp.com",
+    "Email": {
+        "service": "gmail",
+        "auth": {
+            "user": "nmchat2020@gmail.com",
+            "pass": "nmchat2020tkpm"
+        }
+    },
+    "DatabaseConnectionInfo": {
+        "connectionLimit": 100,
+        "host": "us-cdbr-east-06.cleardb.net",
+        "port": 3306,
+        "user": "bd675f7cf2908b",
+        "password": "ead6a19d",
+        "database": "heroku_d47afd14e19567f",
+        "insecureAuth": true
+    },
+
+    "AllowMultipleLogin": false,
+    "AllowMultipleJoinRoom": true,
+    "MaxPeerInRoom": 5,
+    "RoomMediaConfig": {
+        "isAllowVideo": true,
+        "isAllowAudio": true,
+        "isAllowMicro": true
+    },
+    "MaxRoomTime": 1800000
+
+}

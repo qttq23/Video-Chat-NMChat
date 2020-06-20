@@ -1,5 +1,5 @@
 
-
+const config = require('../config.json');
 const roomModel = require('../models/room.model');
 
 var roomList = [];
@@ -43,9 +43,9 @@ module.exports = {
             host: host,
             messages: [],
             config: {
-                isVideo: true,
-                isMicro: true,
-                isAudio: true
+                isVideo: config.RoomMediaConfig.isAllowVideo,
+                isMicro: config.RoomMediaConfig.isAllowMicro,
+                isAudio: config.RoomMediaConfig.isAllowAudio
             }
         });
 
@@ -153,6 +153,22 @@ module.exports = {
                     }
                         , 3000);
                 };
+                var timeoutEndRoom = (roomId) => {
+                    setTimeout(function () {
+                        console.log('timeout, check if room finished');
+                        let i;
+                        for (i = 0; i < roomList.length; i++) {
+                            if (roomList[i].roomId == roomId) {
+                                console.log('room still exists after timeout -> finish room');
+                                socket.broadcast.in(socket.myRoom).emit('room finished');
+                                socket.emit('room finished');
+
+                                return;
+                            }
+                        }
+                    }
+                        , config.MaxRoomTime);
+                };
 
                 if (numClients === 0) {
                     log('Client ID ' + socket.id + ' created room ' + room);
@@ -168,13 +184,16 @@ module.exports = {
                     for (i = 0; i < roomList.length; i++) {
                         if (roomList[i].roomName == socket.myRoom) {
                             socket.myHost = roomList[i].host;
+                            timeoutEndRoom(roomList[i].roomId);
                             break;
                         }
                     }
 
                     timeoutCheckRoomExists();
 
-                } else if (1 <= numClients <= 3) {
+                    
+
+                } else if (1 <= numClients && numClients < config.MaxPeerInRoom) {
                     log('Client ID ' + socket.id + ' joined room ' + room);
 
                     socket.leave(socket.id);

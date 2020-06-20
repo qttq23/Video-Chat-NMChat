@@ -59,7 +59,7 @@ router.post('/profile', async function(req, res) {
      console.log(result);
 
 
-    if (!result) {
+    if (result && result.affectedRows == 1) {
         res.json({
             result: true,
             msg: 'information updated'
