@@ -1,5 +1,6 @@
 
 $('#formSignup').submit(function(){
+    $('#divError').html('');
 
     // gather information
     let username = $('#username').val();
@@ -15,6 +16,11 @@ $('#formSignup').submit(function(){
     // ...
     if(repassword !== password){
         $('#divError').html('re-password doesnot match password');
+        $('#divError').css('color', 'red');
+        return false;
+    }
+    if (!validateEmail(username)) {
+        $('#divError').html('email is not valid. please try another email');
         $('#divError').css('color', 'red');
         return false;
     }
@@ -51,3 +57,7 @@ $('#formSignup').submit(function(){
     return false;
 });
 
+function validateEmail(email) {
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}

@@ -1,4 +1,22 @@
 
+$(()=>{
+
+    // avatar
+    $.ajax({
+        type: 'GET',
+        url: `/upload/user/${userEmail}/icon.png`,
+
+        error: function (xhr) {
+            console.log('no source found, try set default avatar');
+            $('#imgAvatar').attr('src', '/images/icons/default_user.png');
+        },
+        success: function (json) {
+            $('#imgAvatar').attr('src', `/upload/user/${userEmail}/icon.png`);
+
+        }
+    });
+});
+
 
 $('#submit').click(function () {
 
