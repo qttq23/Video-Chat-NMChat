@@ -17,12 +17,14 @@
         <!-- <div class=" w-75 col " id="panelVideo" style="background-color:darkgrey;"> -->
         <div class=" w-75 col " id="panelVideo" style="background-color:darkgrey;">
 
-            <div class="row w-100 video-call-parent" style="margin-left: 10px;">
+            <div class="row w-100 video-call-parent d-flex justify-content-start flex-nowrap"
+             style="margin-left: 10px;overflow-x: auto;">
                 <video class="video-call localVideo" id="local-video" autoplay playsinline muted></video>
                 <video class="video-call remoteVideo" id="remote-video-1" autoplay playsinline></video>
                 <video class="video-call remoteVideo" id="remote-video-2" autoplay playsinline></video>
                 <video class="video-call remoteVideo" id="remote-video-3" autoplay playsinline></video>
                 <video class="video-call remoteVideo" id="remote-video-4" autoplay playsinline></video>
+
             </div>
             <br>
             <br>
@@ -240,7 +242,7 @@
             var isHost = {{this.isHost}};
             var userName = '{{this.userId}}';
 
-            $('.video-call').attr('poster', '/images/icons/default_user.png');
+            // $('.video-call').attr('poster', '/images/icons/default_user.png');
         </script>
         <!-- This file is automatically added/served when running "node index.js". -->
         <script src="/socket.io/socket.io.js"></script>

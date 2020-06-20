@@ -4,6 +4,8 @@
     max-width: 17%;
     margin-left: 5px;
     max-height: 17%;
+    height: 130px;
+    /* width: 200%; */
 }
 
 .video-call-parent {
