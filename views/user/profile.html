@@ -24,7 +24,8 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">NMChat</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -69,11 +70,13 @@
                         <input type="text" style="display: none;" name="id" id="id" value="{{userProfile.UserID}}" />
                         <p class="Title">Name</p>
                         <div class="form-group">
-                            <input type="text" class="form-input" name="name" id="name" placeholder="Your Name" value="{{userProfile.Name}}" />
+                            <input type="text" class="form-input" name="name" id="name" placeholder="Your Name"
+                                value="{{userProfile.Name}}" />
                         </div>
                         <p class="Title">Phone number</p>
                         <div class="form-group">
-                            <input type="text" class="form-input" name="phone" id="phone" placeholder="Phone" value="{{userProfile.PhoneNumber}}" />
+                            <input type="text" class="form-input" name="phone" id="phone" placeholder="Phone"
+                                value="{{userProfile.PhoneNumber}}" />
                         </div>
                         <!-- <p class="Title">Email</p>
                         <div class="form-group">
@@ -81,12 +84,14 @@
                         </div> -->
                         <p class="Title">Birthday</p>
                         <div class="form-group">
-                            <input type="text" class="form-input" name="birthdate" id="birthday" placeholder="Birthday" value="{{userProfile.BirthDate}}" />
+                            <input type="text" class="form-input" name="birthdate" id="birthday" placeholder="Birthday"
+                                value="{{userProfile.BirthDate}}" />
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <input type="submit" action="/user/profile" class="btn btn-info" name="submit" id="submit" form="edit-form" class="form-submit" value="Save change" />
+                    <input type="submit" action="/user/profile" class="btn btn-info" name="submit" id="submit"
+                        form="edit-form" class="form-submit" value="Save change" />
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -109,15 +114,18 @@
 
                         <p class="Title">Current password</p>
                         <div class="form-group">
-                            <input type="password" class="form-input" name="cur_password" id="cur_password" placeholder="Current password" />
+                            <input type="password" class="form-input" name="cur_password" id="cur_password"
+                                placeholder="Current password" />
                         </div>
                         <p class="Title">New password</p>
                         <div class="form-group">
-                            <input type="password" class="form-input" name="new_password" id="new_password" placeholder="New password" />
+                            <input type="password" class="form-input" name="new_password" id="new_password"
+                                placeholder="New password" />
                         </div>
                         <p class="Title">Retype password</p>
                         <div class="form-group">
-                            <input type="password" class="form-input" name="re_password" id="re_password" placeholder="Repeat your password" />
+                            <input type="password" class="form-input" name="re_password" id="re_password"
+                                placeholder="Repeat your password" />
                         </div> -->
                         <div class="">
 
@@ -125,7 +133,8 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <input type="submit" action="/user/profile" class="btn btn-info" name="submit" id="submit-password" form="edit-passowrd-form" class="form-submit" value="Save change" />
+                    <input type="submit" action="/user/profile" class="btn btn-info" name="submit" id="submit-password"
+                        form="edit-passowrd-form" class="form-submit" value="Save change" />
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -140,8 +149,21 @@
         justify-content: center;
         align-items: center;
         align-content: stretch;">
-            <div style="padding: 30px;">
-                <img src="/public/images/icons/default_user.png">
+            <div class="d-flex flex-column align-self-center" style="padding: 30px;">
+                <div>
+
+                    <!-- <img src="/public/images/icons/default_user.png"> -->
+                    <img src="/public/upload/user/{{this.account.UserID}}/icon.png"
+                    width="200px" height="200px">
+                </div>
+                <div>
+                    <button id="btnChangeAvatar" type="button" class="btn btn-primary">Change avatar</button>
+                    <form ref="formUpload" id="formUpload" method="post" class="form-inline" action="/room/upload"
+                        encType="multipart/form-data" style="display: none;">
+                        <input type="file" id="myfile" name="myfile"><br>
+                        
+                    </form>
+                </div>
             </div>
 
             <div>
@@ -161,7 +183,8 @@
             zoom: 1; /* Trigger hasLayout */
             width: 30%;
             text-align: center;">
-                <button type="button" id="button1" class="btn btn-success btn-block" data-toggle="modal" data-target="#myModal1">Edit</button>
+                <button type="button" id="button1" class="btn btn-success btn-block" data-toggle="modal"
+                    data-target="#myModal1">Edit</button>
             </div>
             <div style="display: inline-block;
             display: -moz-inline-box;
@@ -169,7 +192,8 @@
             zoom: 1; /* Trigger hasLayout */
             width: 30%;
             text-align: center;">
-                <button type="button" id="button1" class="btn btn-warning btn-block" data-toggle="modal" data-target="#myModal2">Change Password</button>
+                <button type="button" id="button1" class="btn btn-warning btn-block" data-toggle="modal"
+                    data-target="#myModal2">Change Password</button>
             </div>
             <div style="display: inline-block;
             display: -moz-inline-box;
@@ -186,8 +210,8 @@
     <script>
         let isEdit = {
             {
-                this.isEdit
-            }
+            this.isEdit
+        }
         };
         if (isEdit == false) {
             // $('#button1').prop('disabled', true);
@@ -195,8 +219,8 @@
         }
     </script>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-    <script src="/js-client-server/xprofile.js "></script>
     <script src="/js-client-server/client-config.js "></script>
+    <script src="/js-client-server/xprofile.js "></script>
 </body>
 
 </html>
