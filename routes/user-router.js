@@ -86,7 +86,7 @@ router.post('/upload', function (req, res) {
 
     // get file to save and path to save
     let file = req.files.myfile;
-    let pathToDownLoad = `/upload/user/${req.session.account.UserID}/icon.png`;
+    let pathToDownLoad = `/upload/user/${req.session.account.Email}/icon.png`;
     let pathToSave = PUBLIC_PATH + pathToDownLoad;
     console.log(pathToSave);
 

@@ -309,13 +309,16 @@ function turnOnVideo(isOn){
         if(mainVideo.title == localId){
             mainVideo.srcObject = null;
         }
-
+        setVideoPoster(localVideo, userName);
     }
 
     // set current state
     currentState.isVideo = isOn;
     toggleVideoButton(isOn);
 }
+
+
+
 function turnOnMicro(isOn) {
     if (isOn === true) {
         // start micro
@@ -624,7 +627,7 @@ function gotStream(stream) {
                 // already in room and got media
                 // send ready signal to others
                 console.log('is in room, and got stream => READY');
-                socket.emit('got user media', { from: localId });
+                socket.emit('got user media', { from: localId, email: userName });
 
             }
         }
@@ -737,7 +740,8 @@ socket.on('got user media', (data) => {
     var connection = createPeerConnection(data.from);
     var newPeer = {
         id: data.from,
-        connection: connection
+        connection: connection,
+        email: data.email
     };
     peers.push(newPeer);
 
@@ -938,6 +942,8 @@ function createPeerConnection(toId) {
                     // replace video by image
                     var index = findIndexById(toId);
                     remoteVideos[index].srcObject = null;
+                    // $(remoteVideos[index]).attr('poster', getIconUrl(peers[index].email));
+                    setVideoPoster(remoteVideos[index], peers[index].email);
 
                     if(mainVideo.title === toId){
                         mainVideo.srcObject = null;
@@ -1019,4 +1025,21 @@ function requestTurn(turnURL) {
 
 
     }
+}
+
+
+function setVideoPoster(video, userId) {
+    $.ajax({
+        type: 'GET',
+        url: `/upload/user/${userId}/icon.png`,
+
+        error: function (xhr) {
+            console.log('no source found, try set default poster');
+            $(video).attr('poster', '/images/icons/default_user.png');
+        },
+        success: function (json) {
+            $(video).attr('poster', `/upload/user/${userId}/icon.png`);
+
+        }
+    });
 }
