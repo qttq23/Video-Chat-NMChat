@@ -4,9 +4,18 @@ const roomModel = require('../models/room.model');
 
 var roomList = [];
 
-module.exports = {
 
-    canCreate: (roomName) => {
+class RoomManager{
+
+    static _instance = null;
+    static getInstance(){
+        if(RoomManager._instance == null){
+            RoomManager._instance = new RoomManager();
+        }
+        return RoomManager._instance;
+    }
+
+    canCreate = (roomName) => {
         let i = 0;
         for (i = 0; i < roomList.length; i++) {
             if (roomList[i].roomName == roomName) {
@@ -16,9 +25,9 @@ module.exports = {
 
         return true;
 
-    },
+    }
 
-    canJoin: (roomName, participant) => {
+    canJoin = (roomName, participant) => {
 
         let i = 0;
         for (i = 0; i < roomList.length; i++) {
@@ -28,9 +37,9 @@ module.exports = {
         }
 
         return false;
-    },
+    }
 
-    create: async (roomName, host) => {
+    create = async (roomName, host) => {
 
         // const uuidv4 = require('uuid/v4');
         const { v4: uuidv4 } = require('uuid');
@@ -62,13 +71,13 @@ module.exports = {
         console.log(result);
 
 
-    },
+    }
 
-    join: (roomName, client) => {
+    join = (roomName, client) => {
 
-    },
+    }
 
-    getRoomInfo: (roomId) => {
+    getRoomInfo = (roomId) => {
 
 
         let i = 0;
@@ -79,9 +88,9 @@ module.exports = {
         }
 
         return null;
-    },
+    }
 
-    startSocketIO: () => {
+    startSocketIO = () => {
         io.sockets.on('connection', function (socket) {
 
 
@@ -403,3 +412,7 @@ module.exports = {
     }
 
 }
+
+module.exports = RoomManager.getInstance();
+
+

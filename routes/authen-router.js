@@ -1,6 +1,7 @@
 const express = require('express');
 const userModel = require('../models/user.model');
-var bcrypt = require('bcryptjs');
+// var bcrypt = require('bcryptjs');
+var encryptAlgorithm = require('../utils/EncryptAlgorithm.js');
 const config = require('../config.json');
 
 const router = express.Router();
@@ -45,7 +46,7 @@ router.post('/login', async function (req, res) {
 
     
     // if (!user || req.body.password !== user.Password) {
-    if (!user || bcrypt.compareSync(req.body.password, user.Password) == false) {
+    if (!user || encryptAlgorithm.compareSync(req.body.password, user.Password) == false) {
         res.json({
             result: false,
             msg: 'sign in failed! Check your username and password'
@@ -148,8 +149,9 @@ router.post('/signup', async function (req, res) {
     }
 
     // hash password
-    var salt = bcrypt.genSaltSync(10);
-    var hash = bcrypt.hashSync(req.body.password, salt);
+    // var salt = bcrypt.genSaltSync(10);
+    // var hash = bcrypt.hashSync(req.body.password, salt);
+    var hash = encryptAlgorithm.hashSync(req.body.password);
     console.log(hash);
 
 
