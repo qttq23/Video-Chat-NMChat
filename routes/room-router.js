@@ -8,6 +8,7 @@ roomManager.startSocketIO();
 
 const historyModel = require('../models/join_history.model');
 const config = require('../config.json');
+const datetimeConverter = require('../utils/DatetimeConverter');
 
 
 
@@ -118,7 +119,8 @@ router.get('/', async function (req, res) {
     req.session.roomInfo = roomInfo;
     
     // save history join room
-    var day = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    // var day = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    var day = datetimeConverter.now();
     const result2 = await historyModel.add(
         req.session.account.UserID,
         roomInfo.roomId,
@@ -141,7 +143,8 @@ router.post('/leave', async function (req, res) {
     console.log('leave room: ' + req.body.id);
 
     // save history leave room
-    var day = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    // var day = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    var day = datetimeConverter.now();
     const result2 = await historyModel.update_leave_time(
         req.session.account.UserID,
         req.session.roomInfo.roomId,

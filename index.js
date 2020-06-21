@@ -8,6 +8,7 @@ const socketIO = require('socket.io');
 
 const fileUpload = require('express-fileupload');
 const config = require('./config.json');
+const datetimeConverter = require('./utils/DatetimeConverter');
 
 // create express app
 const app = express();
@@ -172,8 +173,8 @@ app.get('/history/all', async function(req, res){
         host = host[0];
 
         let history = {
-            joinTime: result[i].JoinTime,
-            leaveTime: result[i].LeaveTime,
+            joinTime: datetimeConverter.datetimeConvert(result[i].JoinTime),
+            leaveTime: datetimeConverter.datetimeConvert(result[i].LeaveTime),
             roomName: room.RoomName,
             hostName: host.Email
         };

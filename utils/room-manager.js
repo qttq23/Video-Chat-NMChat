@@ -1,6 +1,7 @@
 
 const config = require('../config.json');
 const roomModel = require('../models/room.model');
+const datetimeConverter = require('../utils/DatetimeConverter');
 
 var roomList = [];
 
@@ -59,7 +60,8 @@ class RoomManager{
         });
 
         // save room to database
-        var day = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        // var day = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        var day = datetimeConverter.now();
         const result = await roomModel.add(
             uniqueInsuranceId,
             // roomName,
@@ -253,7 +255,8 @@ class RoomManager{
 
 
                         // update time leave on database
-                        var day = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                        // var day = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                        var day = datetimeConverter.now();
                         // const result = await 
                         roomModel.update_room_end_time(
                             roomList[i].roomId,
