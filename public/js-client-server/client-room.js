@@ -61,6 +61,7 @@ var camVideoTrack;
 var currentTrack;
 var microTrack;
 var mainVideo = document.querySelector('#remmote-video-large');
+var testVideo = document.querySelector('#testVideo');
 
 // status of devices are being used
 // by default, participant will not use micro
@@ -408,7 +409,7 @@ $('#btnVideo').click(function () {
 
     if (currentState.isVideo === true) {
 
-        alert('click stop video');
+        // alert('click stop video');
         
         turnOnVideo(false);
         
@@ -420,7 +421,7 @@ $('#btnVideo').click(function () {
             return;
         }
 
-        alert('click start video');
+        // alert('click start video');
         turnOnVideo(true);
     }
 
@@ -609,6 +610,9 @@ function gotStream(stream) {
     localVideo.srcObject = stream;
     localVideo.title = localId;
     isGotMedia = true;
+
+    // set stream for test camera video
+    testVideo.srcObject = stream;
 
     // apply config
     if(roomConfig != null){

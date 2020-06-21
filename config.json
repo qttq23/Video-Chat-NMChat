@@ -20,7 +20,7 @@
     },
 
     "AllowMultipleLogin": false,
-    "AllowMultipleJoinRoom": true,
+    "AllowMultipleJoinRoom": false,
     "MaxPeerInRoom": 5,
     "RoomMediaConfig": {
         "isAllowVideo": true,
