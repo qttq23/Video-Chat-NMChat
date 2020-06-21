@@ -309,6 +309,7 @@ function turnOnVideo(isOn){
             peer.videoSender.replaceTrack(null);
         }
 
+        
         // stop show local
         localVideo.srcObject = null;
         if(mainVideo.title == localId){
@@ -397,6 +398,7 @@ function canUseAudio() {
 
 var localVideo = document.querySelector('.localVideo');
 var remoteVideos = document.getElementsByClassName("remoteVideo");
+var remotePosters = document.getElementsByClassName("remotePoster");
 console.log(remoteVideos);
 
 
@@ -579,7 +581,7 @@ socket.on('participants', (participants) => {
 
 socket.on('peer out', (peerId)=>{
     
-    
+    console.log('peer out');
     // remove logic
     // let peer = findPeerById(peerId);
     // peers.pop(peer);
@@ -587,7 +589,17 @@ socket.on('peer out', (peerId)=>{
     // remove ui
     let i = findIndexById(peerId);
     try {
-        remoteVideos[i].style.display = "none";
+        // remoteVideos[i].style.display = "none";
+        // remotePosters[i].style.display = "none";
+        $(remoteVideos[i]).css('display', 'none');
+        $(remotePosters[i]).css('display', 'none');
+
+        // after 1s, hide for sure
+        setTimeout(() => {
+            $(remoteVideos[i]).css('display', 'none');
+            $(remotePosters[i]).css('display', 'none');
+            
+        }, 1500);
     }
     catch (err) {}
 });
@@ -931,7 +943,10 @@ function createPeerConnection(toId) {
                 if (track.kind === 'video') {
                     // replace video by stream
                     var index = findIndexById(toId);
-                    remoteVideos[index].srcObject = stream;
+                    // remoteVideos[index].srcObject = stream;
+
+                    $(remotePosters[index]).css('display', 'none');
+                    $(remoteVideos[index]).css('display', 'inline');
 
                     if (mainVideo.title === toId) {
                         mainVideo.srcObject = stream;
@@ -952,8 +967,20 @@ function createPeerConnection(toId) {
                     // replace video by image
                     var index = findIndexById(toId);
                     var peer = findPeerById(toId);
-                    remoteVideos[index].srcObject = null;
-                    setVideoPoster(remoteVideos[index], peer.email);
+                    
+                    console.log('--> fix stop remote video');
+                    // let remoteVideoStream = remoteVideos[index].srcObject;
+                    // let track = remoteVideoStream.getVideoTracks()[0];
+                    // console.log(track);
+                    // track.enabled = false;
+                    // console.log('after set enabled');
+                    // console.log(track);
+                    
+                    // remoteVideos[index].srcObject = null;
+                    // setVideoPoster(remoteVideos[index], peer.email);
+                    $(remoteVideos[index]).css('display', 'none');
+                    $(remotePosters[index]).css('display', 'inline');
+                    setVideoPoster(remotePosters[index], peer.email);
 
                     if(mainVideo.title === toId){
                         mainVideo.srcObject = null;

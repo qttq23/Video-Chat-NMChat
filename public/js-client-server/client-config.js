@@ -27,7 +27,9 @@ $(() => {
     // append some remote video elements
     let n = 20;
     let htmlVideo = 
-    '<video class="video-call remoteVideo" autoplay playsinline></video>';
+    '<video class="video-call remoteVideo" autoplay playsinline></video>' +
+    '<video class="video-call remotePoster" style="display: none;"></video>';
+    
     for(i = 0; i < n; i++){
         $('.video-call-parent').append(htmlVideo);
     }

@@ -141,7 +141,8 @@ router.get('/', async function (req, res) {
 
 router.post('/leave', async function (req, res) {
     console.log('leave room: ' + req.body.id);
-
+    req.session.isAlreadyInRoom = false;
+    
     // save history leave room
     // var day = new Date().toISOString().slice(0, 19).replace('T', ' ');
     var day = datetimeConverter.now();
@@ -160,7 +161,7 @@ router.post('/leave', async function (req, res) {
         const fs = require('fs-extra');
         fs.removeSync(PUBLIC_PATH + '/upload/room/' + req.session.roomId); 
     }
-    req.session.isAlreadyInRoom = false;
+    
     req.session.roomId = null;
     req.session.isHost = false;
     res.json({ 
