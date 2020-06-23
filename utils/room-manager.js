@@ -216,6 +216,9 @@ class RoomManager{
 
                     timeoutCheckRoomExists();
 
+                    // notify other peers
+                    socket.broadcast.in(socket.myRoom).emit('peer in', socket.myId);
+
                 } else { // max two clients
                     socket.emit('full', room);
                 }
@@ -274,7 +277,7 @@ class RoomManager{
                     }
                 }
 
-                socket.broadcast.in(socket.myRoom).emit('peer out', socket.id);
+                socket.broadcast.in(socket.myRoom).emit('peer out', {id: socket.id, email: socket.myId});
                 socket.leave(socket.myRoom);
                 socket.myRoom = null;
                 socket.myHost = null;

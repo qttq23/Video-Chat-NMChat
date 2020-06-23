@@ -63,6 +63,10 @@ var microTrack;
 var mainVideo = document.querySelector('#remmote-video-large');
 var testVideo = document.querySelector('#testVideo');
 
+
+
+var currentTitle = $('title').html();
+
 // status of devices are being used
 // by default, participant will not use micro
 // but use video and audio
@@ -531,8 +535,23 @@ socket.on('msg', (message) => {
     console.log('msg received');
     $(txtMessages).append('<br>' + message.from + ': ' + message.content);
 
+    if (config.SoundMessageArrived != ''){
+        var snd = new Audio(config.SoundMessageArrived); // buffers automatically when created
+        snd.play();
+    }
+
+    // check if tab is active
+    console.log('hidden: ' + document.hidden);
+    if (document.hidden){
+        $('title').html('(1) ' + currentTitle);
+    }
+
 });
 
+// event user click to tab
+$(window).focus(function () {
+    $('title').html(currentTitle);
+});
 
 /// get list participants
 $(btnParticipants).click(function () {
@@ -579,15 +598,31 @@ socket.on('participants', (participants) => {
     }
 });
 
-socket.on('peer out', (peerId)=>{
+socket.on('peer in', (peerEmail)=>{
+    console.log(peerEmail + ' joined the room');
+
+    // play an alert sound
+    if (config.SoundJoinRoom != ''){
+        var snd = new Audio(config.SoundJoinRoom); // buffers automatically when created
+        snd.play();
+
+    }
+
+    // append to chat
+    $(txtMessages).append('<br>' + '<i>' + peerEmail + ' joined the room' + '</i>');
+});
+
+socket.on('peer out', (peerInfo)=>{
     
+
     console.log('peer out');
+    console.log(peerInfo);
     // remove logic
     // let peer = findPeerById(peerId);
     // peers.pop(peer);
 
     // remove ui
-    let i = findIndexById(peerId);
+    let i = findIndexById(peerInfo.id);
     try {
         // remoteVideos[i].style.display = "none";
         // remotePosters[i].style.display = "none";
@@ -602,6 +637,17 @@ socket.on('peer out', (peerId)=>{
         }, 1500);
     }
     catch (err) {}
+
+
+
+    // sound if needed
+    if(config.SoundLeaveRoom != ''){
+        var snd = new Audio(config.SoundLeaveRoom); // buffers automatically when created
+        snd.play();
+    }
+
+    // append to chat
+    $(txtMessages).append('<br>' + '<i>' + peerInfo.email + ' left the room' + '</i>');
 });
 ///////////////
 

@@ -7,6 +7,11 @@ var config = {
     ChatPanelBackgroundColor: 'white',
     DefaultVideoPoster: '/images/icons/default_user.png',
     MaxFileSizeUpload: 10485760, // equal 10 MB
+
+
+    SoundJoinRoom: '/sounds/when.mp3',
+    SoundLeaveRoom: '',
+    SoundMessageArrived: 'sounds/insight.mp3'
 };
 
 

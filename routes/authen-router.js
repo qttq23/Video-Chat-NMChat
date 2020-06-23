@@ -196,6 +196,7 @@ router.post('/logout', async function (req, res) {
     // remove information
     req.session.isLogin = false;
     req.session.account = null;
+    req.session.isAlreadyInRoom = null;
 
     // redirect to login
     res.json({
