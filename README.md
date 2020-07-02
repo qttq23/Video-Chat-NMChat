@@ -1,8 +1,19 @@
 # Video Chat Project - NMChat
 a web application where people can start meetings, chatting, video conferencing rooms,...
 
+
+#### links:
+website: https://nmchat.herokuapp.com  
+github: https://github.com/qttq23/Video-Chat-NMChat
+
+
+#### v1.2
+add test camera, about page, add sounds when joining/receiving message, fix disable all videos feature
+
 #### v1.1
 create meeting room, video chat, audio chat, send message, send file, share screen
+
+
 
 
 #### references:
