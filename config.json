@@ -27,6 +27,6 @@
         "isAllowAudio": true,
         "isAllowMicro": true
     },
-    "MaxRoomTime": 1800000
+    "MaxRoomTime": 7200000
 
 }

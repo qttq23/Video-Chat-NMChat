@@ -22,7 +22,8 @@ async function doSth(){
     console.log(converter.now());
 }
 
-doSth();
+// doSth();
+console.log(converter.now());
 
 
 
